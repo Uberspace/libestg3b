@@ -43,3 +43,11 @@ def test_estg3b_nomatch():
     assert isinstance(match, list)
     assert len(match) == 1
     assert match[0] == Match(DT.datetime(2018, 2, 1, 8), DT.datetime(2018, 2, 1, 9), set())
+
+
+def test_estg3b_sunday_plus_night():
+    e = EstG3b()
+    match = e.calculate_shift([DT.datetime(2018, 9, 16, 20), DT.datetime(2018, 9, 16, 22)])
+    assert isinstance(match, list)
+    assert len(match) == 1
+    assert match[0] == Match(DT.datetime(2018, 9, 16, 20), DT.datetime(2018, 9, 16, 22), _matchers('Nachtarbeit 20:00-06:00', 'Sonntagsarbeit'))
