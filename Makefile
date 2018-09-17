@@ -7,3 +7,7 @@ lint:
 .PHONY: fixlint
 fixlint:
 	-isort --recursive libestg3b test
+
+.PHONY: test
+test:
+	-py.test test
