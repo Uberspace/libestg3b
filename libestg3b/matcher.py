@@ -25,6 +25,10 @@ class Matcher():
     def _impl_parameters(self):
         return signature(self._impl).parameters
 
+    @property
+    def _bonus(self):
+        return self._multiply if self._multiply else self._add
+
     def _parse_test_time(self, tt):
         default = datetime.datetime(2018, 1, 10)
         return dateutil.parser.parse(tt, default=default) if tt else default
@@ -60,6 +64,15 @@ class Matcher():
 
     def __str__(self):
         return f'<Matcher: {self._description}>'
+
+    def __eq__(self, other):
+        return self._description == other._description
+
+    def __gt__(self, other):
+        return self._bonus > other._bonus
+
+    def __lt__(self, other):
+        return self._bonus < other._bonus
 
 
 class DayMatcher(Matcher):
