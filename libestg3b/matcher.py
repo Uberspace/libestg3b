@@ -1,7 +1,7 @@
 import datetime
 from decimal import Decimal
 from inspect import signature
-from typing import List, Optional
+from typing import Optional, Set
 
 import dateutil
 from holidays import CountryHoliday
@@ -65,6 +65,9 @@ class Matcher():
     def __repr__(self):
         return f'<Matcher: {self._description}>'
 
+    def __hash__(self):
+        return hash(self._description)
+
     def __eq__(self, other):
         return self._description == other._description
 
@@ -99,7 +102,7 @@ class DayTimeMatcher(Matcher):
 class Match():
     start: datetime.datetime
     end: datetime.datetime
-    matchers: List[Matcher]
+    matchers: Set[Matcher]
 
 
 M = Matcher

@@ -55,6 +55,8 @@ class EstG3b:
                 except ValueError:  # no match found
                     pass
 
+            minute_matchers = set(minute_matchers)
+
             if matches and matches[-1].matchers == minute_matchers:
                 # combine equal matches by increasing the length of the last one
                 matches[-1].end = matches[-1].end + relativedelta(minutes=1)
