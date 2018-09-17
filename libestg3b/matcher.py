@@ -17,6 +17,7 @@ class Matcher():
         self._add = add
         self._tests = tests
 
+        assert (multiply is None) != (add is None)
         assert len(description) > 0
         assert 1 <= len(self._impl_parameters) <= 3
 

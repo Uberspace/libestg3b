@@ -7,8 +7,18 @@ from libestg3b.matcher import DayMatcher, DayTimeMatcher, Matcher
 
 
 def test_matcher_init():
-    m = Matcher('a', lambda x: False)
+    m = Matcher('a', lambda x: False, add=1)
     m(None, None, None)
+
+
+def test_matcher_init__no_add_or_multiply():
+    with pytest.raises(AssertionError):
+        Matcher('a', lambda x: False)
+
+
+def test_matcher_init_add_and_multiply():
+    with pytest.raises(AssertionError):
+        Matcher('a', lambda x: False, add=1, multiply=2)
 
 
 def test_matcher_init_no_description():
@@ -30,12 +40,12 @@ def test_matcher_init_impl_nargs_crash(impl):
     lambda a: True,
 ])
 def test_matcher_call_rtn_type(impl):
-    m = Matcher('a', impl)
+    m = Matcher('a', impl, add=1)
     m(None, None, None)
 
 
 def test_matcher_call_rtn_type_crash():
-    m = Matcher('a', lambda x: None)
+    m = Matcher('a', lambda x: None, add=1)
     with pytest.raises(AssertionError):
         m(None, None, None)
 
@@ -48,7 +58,7 @@ def test_matcher_call_passing_1():
         args = [a]
         return True
 
-    m = Matcher('a', impl)
+    m = Matcher('a', impl, add=1)
     m(0, 1, 2)
     assert args == [0]
 
@@ -61,7 +71,7 @@ def test_matcher_call_passing_2():
         args = [a, b]
         return True
 
-    m = Matcher('a', impl)
+    m = Matcher('a', impl, add=1)
     m(0, 1, 2)
     assert args == [0, 1]
 
@@ -74,7 +84,7 @@ def test_matcher_call_passing_3():
         args = [a, b, c]
         return True
 
-    m = Matcher('a', impl)
+    m = Matcher('a', impl, add=1)
     m(0, 1, 2)
     assert args == [0, 1, 2]
 
