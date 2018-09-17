@@ -62,7 +62,7 @@ class Matcher():
 
         return r
 
-    def __str__(self):
+    def __repr__(self):
         return f'<Matcher: {self._description}>'
 
     def __eq__(self, other):
