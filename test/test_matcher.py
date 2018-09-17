@@ -1,10 +1,9 @@
 import datetime
 from decimal import Decimal
-import itertools
 
 import pytest
 
-from libestg3b.matcher import Matcher, DayTimeMatcher, DayMatcher
+from libestg3b.matcher import DayMatcher, DayTimeMatcher, Matcher
 
 
 def test_matcher_init():
@@ -14,7 +13,7 @@ def test_matcher_init():
 
 def test_matcher_init_no_description():
     with pytest.raises(AssertionError):
-        m = Matcher('', lambda x: False)
+        Matcher('', lambda x: False)
 
 
 @pytest.mark.parametrize("impl", [
@@ -23,7 +22,7 @@ def test_matcher_init_no_description():
 ])
 def test_matcher_init_impl_nargs_crash(impl):
     with pytest.raises(AssertionError):
-        m = Matcher('a', impl)
+        Matcher('a', impl)
 
 
 @pytest.mark.parametrize("impl", [
@@ -43,10 +42,12 @@ def test_matcher_call_rtn_type_crash():
 
 def test_matcher_call_passing_1():
     args = None
+
     def impl(a):
         nonlocal args
         args = [a]
         return True
+
     m = Matcher('a', impl)
     m(0, 1, 2)
     assert args == [0]
@@ -54,10 +55,12 @@ def test_matcher_call_passing_1():
 
 def test_matcher_call_passing_2():
     args = None
+
     def impl(a, b):
         nonlocal args
         args = [a, b]
         return True
+
     m = Matcher('a', impl)
     m(0, 1, 2)
     assert args == [0, 1]
@@ -65,10 +68,12 @@ def test_matcher_call_passing_2():
 
 def test_matcher_call_passing_3():
     args = None
+
     def impl(a, b, c):
         nonlocal args
         args = [a, b, c]
         return True
+
     m = Matcher('a', impl)
     m(0, 1, 2)
     assert args == [0, 1, 2]

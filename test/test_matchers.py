@@ -1,7 +1,7 @@
 import itertools
 
-import pytest
 import holidays
+import pytest
 
 from libestg3b.matcher import matchers
 
