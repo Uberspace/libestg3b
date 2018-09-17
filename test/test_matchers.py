@@ -13,7 +13,7 @@ def _generate_matcher_examples(matchers, holidays):
 
 @pytest.mark.parametrize(
     'matcher,holidays,minute,first_minute,result',
-    _generate_matcher_examples(matchers['de'], holidays.DE())
+    _generate_matcher_examples(matchers['DE'], holidays.DE())
 )
 def test_matchers(matcher, minute, first_minute, holidays, result):
     assert matcher(minute, first_minute, holidays) == result

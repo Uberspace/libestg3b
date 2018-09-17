@@ -92,7 +92,7 @@ class Match():
 M = Matcher
 
 matchers = {
-    'de': (
+    'DE': (
         (
             M(
                 'Nachtarbeit 20:00-06:00', lambda m: m.hour >= 20 or m.hour < 6, multiply=Decimal('0.25'),
