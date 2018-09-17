@@ -55,11 +55,12 @@ class EstG3b:
                 except ValueError:  # no match found
                     pass
 
-            # combine equal matches by increasing the length of the last one
             if matches and matches[-1].matchers == minute_matchers:
+                # combine equal matches by increasing the length of the last one
                 matches[-1].end = matches[-1].end + relativedelta(minutes=1)
             else:
-                matches.append(Match(minute, minute, minute_matchers))
+                # a list of minutes is inclusive the last one, the `end` stamp is exclusive
+                matches.append(Match(minute, minute + relativedelta(minutes=1), minute_matchers))
 
         return matches
 
