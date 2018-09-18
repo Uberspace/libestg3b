@@ -42,6 +42,13 @@ This library is currently python 3.7 only. If you would like to use this library
 with a lower python version, please open an issue. We're happy to change things
 around.
 
+## Versioning
+
+New version numbers are assigned following [semver](http://semver.org/). All
+0.x.y versions are tested and usable, but do not have a stable public interface.
+
+A version 1.0 will be released, once we deem the library stable.
+
 # License
 
 All code in this repository is licensed under the MIT license.
