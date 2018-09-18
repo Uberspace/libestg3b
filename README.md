@@ -49,6 +49,23 @@ New version numbers are assigned following [semver](http://semver.org/). All
 
 A version 1.0 will be released, once we deem the library stable.
 
+## Releasing a new version
+
+Assuming you have been handed the required credentials, a new version
+can be released as follows.
+
+1. adapt the version in `setup.py`, according to [semver](http://semver.org/)
+2. commit this change as `Version 1.2.3`
+3. tag the resulting commit as `v1.2.3`
+4. push the new tag as well as the `master` branch
+5. update the package on PyPI:
+
+```
+rm dist/*
+python setup.py sdist bdist_wheel
+twine upload dist/*
+```
+
 # License
 
 All code in this repository is licensed under the MIT license.
