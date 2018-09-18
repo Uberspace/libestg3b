@@ -3,7 +3,7 @@ from decimal import Decimal
 
 import pytest
 
-from libestg3b.matcher import DayMatcher, DayTimeMatcher, Matcher
+from libestg3b.matcher import DayMatcher, DayTimeMatcher, Matcher, MatcherGroup
 
 
 def test_matcher_init():
@@ -117,3 +117,65 @@ def test_daymatcher(dt, res):
 def test_daytimematcher(dt, res):
     m = DayTimeMatcher('XXX', 12, 24, 14, multiply=Decimal('1.25'))
     assert m(dt, dt, None) == res
+
+
+def test_matchergroup():
+    MatcherGroup('xxx', [])
+
+
+def test_matchergroup_init():
+    mg = MatcherGroup('xxx', [DayMatcher('mmm', 1, 1, multiply=2)])
+    assert mg._description == 'xxx'
+    assert len(mg._matchers) == 1
+    assert mg._matchers['mmm']._slug == 'mmm'
+
+
+def test_matchergroup_duplicate():
+    with pytest.raises(Exception):
+        MatcherGroup('xxx', [
+            DayMatcher('mmm', 1, 1, multiply=2),
+            DayMatcher('mmm', 1, 1, multiply=2),
+        ])
+
+
+def test_matchergroup_append():
+    mg = MatcherGroup('xxx', [])
+    mg.append(DayMatcher('mmm', 1, 1, multiply=2))
+    assert len(mg._matchers) == 1
+    assert mg._matchers['mmm']._slug == 'mmm'
+
+
+def test_matchergroup_contains():
+    mg = MatcherGroup('xxx', [DayMatcher('mmm', 1, 1, multiply=2)])
+    assert 'mmm' in mg
+    assert DayMatcher('mmm', 1, 1, multiply=2) in mg
+
+
+def test_matchergroup_iter():
+    mg = MatcherGroup('xxx', [
+        DayMatcher('mmm1', 1, 1, multiply=2),
+        DayMatcher('mmm2', 2, 2, multiply=2),
+    ])
+
+    i = iter(mg)
+
+    assert next(i)._slug == 'mmm1'
+    assert next(i)._slug == 'mmm2'
+
+    with pytest.raises(StopIteration):
+        next(i)
+
+
+def test_matchergroup_append_non_matcher():
+    mg = MatcherGroup('xxx', [])
+
+    with pytest.raises(Exception):
+        mg.append("bla")
+
+
+def test_matchergroup_append_duplicate():
+    mg = MatcherGroup('xxx', [])
+    mg.append(DayMatcher('mmm', 1, 1, multiply=2))
+
+    with pytest.raises(Exception):
+        mg.append(DayMatcher('mmm', 1, 1, multiply=2))

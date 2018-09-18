@@ -9,7 +9,7 @@ def _matchers(e, *slugs):
     found = set()
     slugs = set(slugs)
 
-    for matcher in itertools.chain.from_iterable(e._matchers):
+    for matcher in itertools.chain.from_iterable(e._groups):
         if matcher._slug in slugs:
             found.add(matcher)
             slugs.remove(matcher._slug)

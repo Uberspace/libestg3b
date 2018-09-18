@@ -100,6 +100,45 @@ class DayTimeMatcher(Matcher):
         )
 
 
+class MatcherGroup():
+    def __init__(self, description, matchers):
+        self._description = description
+        self._matchers = {}
+
+        for m in matchers:
+            self.append(m)
+
+    def append(self, matcher):
+        if matcher._slug in self._matchers:
+            raise Exception(f'Slug {matcher._slug} is already in this group')
+        if not isinstance(matcher, Matcher):
+            raise Exception('Matchers must be derived from libestg3b.Matcher')
+
+        self._matchers[matcher._slug] = matcher
+
+    def match(self, minute, first_minute, holidays):
+        try:
+            return max(filter(lambda matcher: matcher(minute, first_minute, holidays), self))
+        except ValueError:  # no match found
+            return None
+
+    def extend(self, new_matchers, replace=False):
+        for m in new_matchers:
+            if replace:
+                self._matchers.pop(m._slug, None)
+
+            self.append(m)
+
+    def __contains__(self, item):
+        if isinstance(item, Matcher):
+            return item._slug in self._matchers
+        else:
+            return item in self._matchers
+
+    def __iter__(self):
+        return self._matchers.values().__iter__()
+
+
 @dataclass
 class Match():
     start: datetime.datetime

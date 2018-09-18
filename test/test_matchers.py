@@ -6,7 +6,7 @@ from libestg3b.estg3b import EstG3bs
 
 
 def _generate_matcher_examples(e):
-    for m in itertools.chain.from_iterable(e._matchers):  # flatten groups
+    for m in itertools.chain.from_iterable(e._groups):  # flatten groups
         yield from ([m, e._holidays, *ex] for ex in m.examples())
 
 

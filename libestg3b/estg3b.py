@@ -8,6 +8,7 @@ from dateutil.relativedelta import relativedelta
 
 from .matcher import DayMatcher, DayTimeMatcher, Match
 from .matcher import Matcher as M
+from .matcher import MatcherGroup
 
 
 def EstG3b(country):
@@ -23,16 +24,17 @@ def EstG3bs():
 
 
 class EstG3bBase:
-    def __init__(self, country, base_matchers, add_matchers=None, replace_matchers=None) -> None:
+    def __init__(self, country, groups, add_matchers=None, replace_matchers=None) -> None:
         self._holidays = holidays.CountryHoliday(country.upper())
-        self._matchers = base_matchers
+        self._groups = groups
 
         if replace_matchers:
-            self._matchers = replace_matchers.copy()
+            self._groups = replace_matchers.copy()
         if add_matchers:
-            self._machers.extend(add_matchers)
+            self._groups.extend(add_matchers)
 
-        assert self._matchers
+        assert self._groups
+        assert all(lambda g: isinstance(g, MatcherGroup) for g in self._groups)
 
     def _list_minutes(self, start, end):
         start = start.replace(second=0, microsecond=0)
@@ -54,19 +56,11 @@ class EstG3bBase:
         matches = []
 
         for minute in minutes:
-            minute_matchers = []
-
-            # find the highest matcher for each group (if any) and save it
-            for group in self._matchers:
-                try:
-                    minute_matchers.append(max([
-                        matcher for matcher in group
-                        if matcher(minute, first_minute, self._holidays)
-                    ]))
-                except ValueError:  # no match found
-                    pass
-
-            minute_matchers = set(minute_matchers)
+            minute_matchers = set(
+                group.match(minute, first_minute, self._holidays)
+                for group in self._groups
+            )
+            minute_matchers.discard(None)
 
             if matches and matches[-1].matchers == minute_matchers:
                 # combine equal matches by increasing the length of the last one
@@ -84,7 +78,7 @@ class EstG3bBase:
 class EstG3bGermany(EstG3bBase):
     def __init__(self, **kwargs):
         matchers = (
-            (
+            MatcherGroup('Nachtarbeit', (
                 M(
                     'DE_NIGHT', 'Nachtarbeit 20:00-06:00',
                     lambda m: m.hour >= 20 or m.hour < 6, multiply=Decimal('0.25'),
@@ -106,8 +100,8 @@ class EstG3bGermany(EstG3bBase):
                         ('23:59~04:00', False),
                     )
                 ),
-            ),
-            (
+            )),
+            MatcherGroup('Sonntags und Feiertagsarbeit', (
                 M(
                     'DE_SUNDAY', 'Sonntagsarbeit',
                     lambda m: m.weekday() == 6, multiply=Decimal('0.5'),
@@ -161,7 +155,7 @@ class EstG3bGermany(EstG3bBase):
                 DayMatcher('DE_CHRISTMAS', 12, 25, multiply=Decimal('1.5')),
                 DayMatcher('DE_STEFANITAG', 12, 26, multiply=Decimal('1.5')),
                 DayMatcher('DE_NEWYEARS', 5, 1, multiply=Decimal('1.5')),
-            ),
+            )),
         )
         super().__init__('DE', matchers, **kwargs)
 
