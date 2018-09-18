@@ -1,7 +1,7 @@
 import datetime as DT
 import itertools
 
-from libestg3b import EstG3bGermany
+from libestg3b import EstG3b
 from libestg3b.matcher import Match
 
 
@@ -21,7 +21,7 @@ def _matchers(e, *descriptions):
 
 
 def test_estg3b():
-    e = EstG3bGermany()
+    e = EstG3b('DE')
     match = e.calculate_shift([DT.datetime(2018, 2, 1, 2), DT.datetime(2018, 2, 1, 6)])
     assert isinstance(match, list)
     assert len(match) == 1
@@ -29,7 +29,7 @@ def test_estg3b():
 
 
 def test_estg3b_multimatch():
-    e = EstG3bGermany()
+    e = EstG3b('DE')
     match = e.calculate_shift([DT.datetime(2018, 2, 1, 2), DT.datetime(2018, 2, 1, 7)])
     assert isinstance(match, list)
     assert len(match) == 2
@@ -38,7 +38,7 @@ def test_estg3b_multimatch():
 
 
 def test_estg3b_nomatch():
-    e = EstG3bGermany()
+    e = EstG3b('DE')
     match = e.calculate_shift([DT.datetime(2018, 2, 1, 8), DT.datetime(2018, 2, 1, 9)])
     assert isinstance(match, list)
     assert len(match) == 1
@@ -46,7 +46,7 @@ def test_estg3b_nomatch():
 
 
 def test_estg3b_sunday_plus_night():
-    e = EstG3bGermany()
+    e = EstG3b('DE')
     match = e.calculate_shift([DT.datetime(2018, 9, 16, 20), DT.datetime(2018, 9, 16, 22)])
     assert isinstance(match, list)
     assert len(match) == 1

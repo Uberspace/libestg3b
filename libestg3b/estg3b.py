@@ -158,3 +158,6 @@ class EstG3bGermany(EstG3bBase):
             ),
         )
         super().__init__('DE', matchers, **kwargs)
+
+
+EstG3bDE = EstG3bGermany

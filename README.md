@@ -14,8 +14,8 @@ Arbeitszeiten die höhe der maximalen Zuschläge.
 
 ```pycon
 >>> import datetime as DT
->>> from libestg3b import EstG3bGermany
->>> e = EstG3bGermany()
+>>> from libestg3b import EstG3b
+>>> e = EstG3b('DE')
 >>> e.calculate_shift([datetime(2018, 9, 16, 20), datetime(2018, 9, 17, 2)])
 [
     Match(
