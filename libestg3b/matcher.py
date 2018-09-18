@@ -37,28 +37,28 @@ class Matcher():
 
     def examples(self):
         for t in self._tests:
-            first_minute, minute = t[0].split('~')
+            start, minute = t[0].split('~')
             minute = self._parse_test_time(minute)
-            first_minute = self._parse_test_time(first_minute)
+            start = self._parse_test_time(start)
 
-            if minute.time() < first_minute.time():
+            if minute.time() < start.time():
                 minute = minute + dateutil.relativedelta.relativedelta(days=1)
 
             yield [
                 minute,
-                first_minute,
+                start,
                 t[1],
             ]
 
-    def __call__(self, minute: datetime.datetime, first_minute: datetime.datetime, holidays: CountryHoliday) -> bool:
+    def __call__(self, minute: datetime.datetime, start: datetime.datetime, holidays: CountryHoliday) -> bool:
         narg = len(self._impl_parameters)
 
         if narg == 1:
             r = self._impl(minute)
         elif narg == 2:
-            r = self._impl(minute, first_minute)
+            r = self._impl(minute, start)
         elif narg == 3:
-            r = self._impl(minute, first_minute, holidays)
+            r = self._impl(minute, start, holidays)
 
         assert isinstance(r, bool)
 
@@ -116,9 +116,9 @@ class MatcherGroup():
 
         self._matchers[matcher._slug] = matcher
 
-    def match(self, minute, first_minute, holidays):
+    def match(self, minute, start, holidays):
         try:
-            return max(filter(lambda matcher: matcher(minute, first_minute, holidays), self))
+            return max(filter(lambda matcher: matcher(minute, start, holidays), self))
         except ValueError:  # no match found
             return None
 

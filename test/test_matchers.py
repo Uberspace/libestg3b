@@ -11,8 +11,8 @@ def _generate_matcher_examples(e):
 
 
 @pytest.mark.parametrize(
-    'matcher,holidays,minute,first_minute,result',
+    'matcher,holidays,minute,start,result',
     itertools.chain.from_iterable(_generate_matcher_examples(e()) for e in EstG3bs())
 )
-def test_matchers(matcher, minute, first_minute, holidays, result):
-    assert matcher(minute, first_minute, holidays) == result
+def test_matchers(matcher, minute, start, holidays, result):
+    assert matcher(minute, start, holidays) == result

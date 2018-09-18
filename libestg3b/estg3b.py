@@ -50,14 +50,14 @@ class EstG3bBase:
         assert isinstance(shift[1], datetime.datetime)
 
         minutes = self._list_minutes(shift[0], shift[1])
-        first_minute = next(minutes)
-        minutes = itertools.chain([first_minute], minutes)
+        start = next(minutes)
+        minutes = itertools.chain([start], minutes)
 
         matches = []
 
         for minute in minutes:
             minute_matchers = set(
-                group.match(minute, first_minute, self._holidays)
+                group.match(minute, start, self._holidays)
                 for group in self._groups
             )
             minute_matchers.discard(None)
@@ -92,7 +92,7 @@ class EstG3bGermany(EstG3bBase):
                 ),
                 M(
                     'DE_NIGHT_00_04', 'Nachtarbeit 00:00-04:00 (Folgetag)',
-                    lambda m, f: 0 <= m.hour < 4 and f.date() < m.date(), multiply=Decimal('0.4'),
+                    lambda m, s: 0 <= m.hour < 4 and s.date() < m.date(), multiply=Decimal('0.4'),
                     tests=(
                         ('00:00~00:01', False),
                         ('23:59~00:01', True),
@@ -114,7 +114,7 @@ class EstG3bGermany(EstG3bBase):
                 ),
                 M(
                     'DE_SUNDAY_NEXT_NIGHT', 'Sonntagsarbeit (Montag)',
-                    lambda m, f: f.weekday() == 6 and 0 <= m.hour < 4, multiply=Decimal('0.5'),
+                    lambda m, s: s.weekday() == 6 and 0 <= m.hour < 4, multiply=Decimal('0.5'),
                     tests=(
                         # 2018-09-16 is a Sunday
                         ('~2018-09-16 00:00', False),
@@ -127,7 +127,7 @@ class EstG3bGermany(EstG3bBase):
                 ),
                 M(
                     'DE_HOLIDAY', 'Feiertagsarbeit',
-                    lambda m, f, holidays: m in holidays, multiply=Decimal('1.25'),
+                    lambda m, s, holidays: m in holidays, multiply=Decimal('1.25'),
                     tests=(
                         # 2018-05-10 is Christi Himmelfahrt
                         ('~2018-05-09 23:59', False),
@@ -139,7 +139,7 @@ class EstG3bGermany(EstG3bBase):
                 ),
                 M(
                     'DE_HOLIDAY_NEXT_NIGHT', 'Feiertagsarbeit (Folgetag)',
-                    lambda m, f, holidays: f in holidays and 0 <= m.hour < 4, multiply=Decimal('1.25'),
+                    lambda m, s, holidays: s in holidays and 0 <= m.hour < 4, multiply=Decimal('1.25'),
                     tests=(
                         # 2018-05-10 is Christi Himmelfahrt
                         ('~2018-05-10 00:00', False),
