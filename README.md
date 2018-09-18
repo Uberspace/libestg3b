@@ -41,3 +41,7 @@ Arbeitszeiten die höhe der maximalen Zuschläge.
 This library is currently python 3.7 only. If you would like to use this library
 with a lower python version, please open an issue. We're happy to change things
 around.
+
+# License
+
+All code in this repository is licensed under the MIT license.
