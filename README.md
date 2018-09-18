@@ -9,8 +9,8 @@ premium factor (e.g. 1.5) as well as the relevant timespans.
 
 ```pycon
 >>> import datetime as DT
->>> from libestg3b import EstG3b
->>> e = EstG3b()
+>>> from libestg3b import EstG3bGermany
+>>> e = EstG3bGermany()
 >>> e.calculate_shift([datetime(2018, 9, 16, 20), datetime(2018, 9, 17, 2)])
 [
     Match(
