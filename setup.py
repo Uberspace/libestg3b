@@ -1,4 +1,5 @@
 from __future__ import print_function
+from os import path
 import sys
 
 try:
@@ -15,6 +16,8 @@ setup(
     author='uberspace.de',
     author_email='hallo@uberspace.de',
     url='https://github.com/uberspace/libestg3b',
+    long_description=open(path.abspath(path.dirname(__file__)) + '/README.md').read(),
+    long_description_content_type='text/markdown',
     packages=[
         'libestg3b',
     ],
