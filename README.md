@@ -1,14 +1,14 @@
 # libestg3b
 
-§ 3b of the german Einkommensteuergesetz (EStG) defines the premiums for work on
+§ 3b of the German Einkommensteuergesetz (EStG) defines the premiums for work on
 weekends, holidays and special days, like new year. This library takes a list of
 work hours / shifts (e.g. on 2018-06-03 from 19:00 until 03:00) and returns the
-premium factor (e.g. 1.5) as well as the relevant timespans.
+premium factor (e.g. 1.5) as well as the relevant time-spans.
 
 § 3b des Deutschen Einkommensteuergesetzes (EStG) definiert die Höhe der
 steuerfreien Zuschläge für Arbeit in der Nacht, an Sonntagen, Feiertagen sowie
-besondere Tage wie Neujahr. Diese Library erreichnet aus einer Liste von
-Arbeitszeiten die höhe der maximalen Zuschläge.
+besondere Tage wie Neujahr. Diese Library errechnet aus einer Liste von
+Arbeitszeiten die Höhe der maximalen Zuschläge.
 
 ## Installation
 
