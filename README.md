@@ -10,6 +10,14 @@ steuerfreien Zuschläge für Arbeit in der Nacht, an Sonntagen, Feiertagen sowie
 besondere Tage wie Neujahr. Diese Library erreichnet aus einer Liste von
 Arbeitszeiten die höhe der maximalen Zuschläge.
 
+## Installation
+
+Install libestg3b via pip:
+
+```
+$ pip install libestg3b
+```
+
 ## Usage
 
 ```pycon
