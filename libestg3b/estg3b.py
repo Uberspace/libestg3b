@@ -86,7 +86,8 @@ class EstG3bGermany(EstG3bBase):
         matchers = (
             (
                 M(
-                    'Nachtarbeit 20:00-06:00', lambda m: m.hour >= 20 or m.hour < 6, multiply=Decimal('0.25'),
+                    'DE_NIGHT', 'Nachtarbeit 20:00-06:00',
+                    lambda m: m.hour >= 20 or m.hour < 6, multiply=Decimal('0.25'),
                     tests=(
                         ('~19:59', False),
                         ('~20:00', True),
@@ -96,7 +97,8 @@ class EstG3bGermany(EstG3bBase):
                     ),
                 ),
                 M(
-                    'Nachtarbeit 00:00-04:00 (Folgetag)', lambda m, f: 0 <= m.hour < 4 and f.date() < m.date(), multiply=Decimal('0.4'),
+                    'DE_NIGHT_00_04', 'Nachtarbeit 00:00-04:00 (Folgetag)',
+                    lambda m, f: 0 <= m.hour < 4 and f.date() < m.date(), multiply=Decimal('0.4'),
                     tests=(
                         ('00:00~00:01', False),
                         ('23:59~00:01', True),
@@ -107,7 +109,8 @@ class EstG3bGermany(EstG3bBase):
             ),
             (
                 M(
-                    'Sonntagsarbeit', lambda m: m.weekday() == 6, multiply=Decimal('0.5'),
+                    'DE_SUNDAY', 'Sonntagsarbeit',
+                    lambda m: m.weekday() == 6, multiply=Decimal('0.5'),
                     tests=(
                         ('~2018-09-15', False),
                         ('~2018-09-16 00:00', True),
@@ -116,7 +119,8 @@ class EstG3bGermany(EstG3bBase):
                     ),
                 ),
                 M(
-                    'Sonntagsarbeit (Montag)', lambda m, f: f.weekday() == 6 and 0 <= m.hour < 4, multiply=Decimal('0.5'),
+                    'DE_SUNDAY_NEXT_NIGHT', 'Sonntagsarbeit (Montag)',
+                    lambda m, f: f.weekday() == 6 and 0 <= m.hour < 4, multiply=Decimal('0.5'),
                     tests=(
                         # 2018-09-16 is a Sunday
                         ('~2018-09-16 00:00', False),
@@ -128,7 +132,8 @@ class EstG3bGermany(EstG3bBase):
                     ),
                 ),
                 M(
-                    'Feiertagsarbeit', lambda m, f, holidays: m in holidays, multiply=Decimal('1.25'),
+                    'DE_HOLIDAY', 'Feiertagsarbeit',
+                    lambda m, f, holidays: m in holidays, multiply=Decimal('1.25'),
                     tests=(
                         # 2018-05-10 is Christi Himmelfahrt
                         ('~2018-05-09 23:59', False),
@@ -139,7 +144,8 @@ class EstG3bGermany(EstG3bBase):
                     ),
                 ),
                 M(
-                    'Feiertagsarbeit (Folgetag)', lambda m, f, holidays: f in holidays and 0 <= m.hour < 4, multiply=Decimal('1.25'),
+                    'DE_HOLIDAY_NEXT_NIGHT', 'Feiertagsarbeit (Folgetag)',
+                    lambda m, f, holidays: f in holidays and 0 <= m.hour < 4, multiply=Decimal('1.25'),
                     tests=(
                         # 2018-05-10 is Christi Himmelfahrt
                         ('~2018-05-10 00:00', False),
@@ -150,11 +156,11 @@ class EstG3bGermany(EstG3bBase):
                         ('2018-09-11 23:59~2018-05-12 00:00', False),
                     )
                 ),
-                DayTimeMatcher(12, 24, 14, multiply=Decimal('1.25')),
-                DayTimeMatcher(12, 31, 14, multiply=Decimal('1.25')),
-                DayMatcher(12, 25, multiply=Decimal('1.5')),
-                DayMatcher(12, 26, multiply=Decimal('1.5')),
-                DayMatcher(5, 1, multiply=Decimal('1.5')),
+                DayTimeMatcher('DE_CHRISTMAS_EVE', 12, 24, 14, multiply=Decimal('1.25')),
+                DayTimeMatcher('DE_NEWYEARS_EVE', 12, 31, 14, multiply=Decimal('1.25')),
+                DayMatcher('DE_CHRISTMAS', 12, 25, multiply=Decimal('1.5')),
+                DayMatcher('DE_STEFANITAG', 12, 26, multiply=Decimal('1.5')),
+                DayMatcher('DE_NEWYEARS', 5, 1, multiply=Decimal('1.5')),
             ),
         )
         super().__init__('DE', matchers, **kwargs)

@@ -5,17 +5,17 @@ from libestg3b import EstG3b
 from libestg3b.matcher import Match
 
 
-def _matchers(e, *descriptions):
+def _matchers(e, *slugs):
     found = set()
-    descriptions = set(descriptions)
+    slugs = set(slugs)
 
     for matcher in itertools.chain.from_iterable(e._matchers):
-        if matcher._description in descriptions:
+        if matcher._slug in slugs:
             found.add(matcher)
-            descriptions.remove(matcher._description)
+            slugs.remove(matcher._slug)
 
-    if descriptions:
-        raise LookupError('Could not find ' + ','.join(descriptions))
+    if slugs:
+        raise LookupError('Could not find ' + ' '.join(slugs))
 
     return found
 
@@ -25,7 +25,7 @@ def test_estg3b():
     match = e.calculate_shift([DT.datetime(2018, 2, 1, 2), DT.datetime(2018, 2, 1, 6)])
     assert isinstance(match, list)
     assert len(match) == 1
-    assert match[0] == Match(DT.datetime(2018, 2, 1, 2), DT.datetime(2018, 2, 1, 6), _matchers(e, 'Nachtarbeit 20:00-06:00'))
+    assert match[0] == Match(DT.datetime(2018, 2, 1, 2), DT.datetime(2018, 2, 1, 6), _matchers(e, 'DE_NIGHT'))
 
 
 def test_estg3b_multimatch():
@@ -33,7 +33,7 @@ def test_estg3b_multimatch():
     match = e.calculate_shift([DT.datetime(2018, 2, 1, 2), DT.datetime(2018, 2, 1, 7)])
     assert isinstance(match, list)
     assert len(match) == 2
-    assert match[0] == Match(DT.datetime(2018, 2, 1, 2), DT.datetime(2018, 2, 1, 6), _matchers(e, 'Nachtarbeit 20:00-06:00'))
+    assert match[0] == Match(DT.datetime(2018, 2, 1, 2), DT.datetime(2018, 2, 1, 6), _matchers(e, 'DE_NIGHT'))
     assert match[1] == Match(DT.datetime(2018, 2, 1, 6), DT.datetime(2018, 2, 1, 7), set())
 
 
@@ -50,4 +50,4 @@ def test_estg3b_sunday_plus_night():
     match = e.calculate_shift([DT.datetime(2018, 9, 16, 20), DT.datetime(2018, 9, 16, 22)])
     assert isinstance(match, list)
     assert len(match) == 1
-    assert match[0] == Match(DT.datetime(2018, 9, 16, 20), DT.datetime(2018, 9, 16, 22), _matchers(e, 'Nachtarbeit 20:00-06:00', 'Sonntagsarbeit'))
+    assert match[0] == Match(DT.datetime(2018, 9, 16, 20), DT.datetime(2018, 9, 16, 22), _matchers(e, 'DE_NIGHT', 'DE_SUNDAY'))

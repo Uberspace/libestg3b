@@ -10,7 +10,8 @@ from dataclasses import dataclass
 
 
 class Matcher():
-    def __init__(self, description: str, impl, *, multiply: Optional[Decimal] = None, add: Optional[Decimal] = None, tests=[]) -> None:
+    def __init__(self, slug, description: str, impl, *, multiply: Optional[Decimal] = None, add: Optional[Decimal] = None, tests=[]) -> None:
+        self._slug = slug
         self._description = description
         self._impl = impl
         self._multiply = multiply
@@ -18,6 +19,7 @@ class Matcher():
         self._tests = tests
 
         assert (multiply is None) != (add is None)
+        assert len(slug) > 0
         assert len(description) > 0
         assert 1 <= len(self._impl_parameters) <= 3
 
@@ -63,13 +65,13 @@ class Matcher():
         return r
 
     def __repr__(self):
-        return f'<Matcher: {self._description}>'
+        return f'<Matcher: {self._slug} {self._description}>'
 
     def __hash__(self):
-        return hash(self._description)
+        return hash(self._slug)
 
     def __eq__(self, other):
-        return self._description == other._description
+        return self._slug == other._slug
 
     def __gt__(self, other):
         return self._bonus > other._bonus
@@ -80,9 +82,9 @@ class Matcher():
 
 class DayMatcher(Matcher):
     """ match, if the given minute is within the given day. Keyword arguments are passed onto Matcher. """
-    def __init__(self, month: int, day: int, **kwargs) -> None:
+    def __init__(self, slug, month: int, day: int, **kwargs) -> None:
         super().__init__(
-            f'{month:02d}-{day:02d}',
+            slug, f'{month:02d}-{day:02d}',
             lambda m: m.month == month and m.day == day,
             **kwargs,
         )
@@ -90,9 +92,9 @@ class DayMatcher(Matcher):
 
 class DayTimeMatcher(Matcher):
     """ match, if the given minute is within the given day after the given hour. Keyword arguments are passed onto Matcher. """
-    def __init__(self, month: int, day: int, hour: int, **kwargs) -> None:
+    def __init__(self, slug, month: int, day: int, hour: int, **kwargs) -> None:
         super().__init__(
-            f'{month:02d}-{day:02d} {hour:02d}:00+',
+            slug, f'{month:02d}-{day:02d} {hour:02d}:00+',
             lambda m: m.month == month and m.day == day and m.hour >= hour,
             **kwargs,
         )
