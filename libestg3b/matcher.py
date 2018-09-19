@@ -1,7 +1,7 @@
 import datetime
 from decimal import Decimal
 from inspect import signature
-from typing import Optional, Set
+from typing import Dict, Iterable, Iterator, Optional, Set  # noqa: W0611
 
 import dateutil
 from holidays import CountryHoliday
@@ -101,14 +101,14 @@ class DayTimeMatcher(Matcher):
 
 
 class MatcherGroup():
-    def __init__(self, description, matchers):
+    def __init__(self, description: str, matchers: Iterable[Matcher]) -> None:
         self._description = description
-        self._matchers = {}
+        self._matchers = {}  # type: Dict[str, Matcher]
 
         for m in matchers:
             self.append(m)
 
-    def append(self, matcher):
+    def append(self, matcher: Matcher) -> None:
         if matcher._slug in self._matchers:
             raise Exception(f'Slug {matcher._slug} is already in this group')
         if not isinstance(matcher, Matcher):
@@ -116,26 +116,26 @@ class MatcherGroup():
 
         self._matchers[matcher._slug] = matcher
 
-    def match(self, minute, start, holidays):
+    def match(self, minute: datetime.datetime, start: datetime.datetime, holidays: CountryHoliday) -> Optional[Matcher]:
         try:
             return max(filter(lambda matcher: matcher(minute, start, holidays), self))
         except ValueError:  # no match found
             return None
 
-    def extend(self, new_matchers, replace=False):
+    def extend(self, new_matchers: Iterable[Matcher], replace: bool = False) -> None:
         for m in new_matchers:
             if replace:
                 self._matchers.pop(m._slug, None)
 
             self.append(m)
 
-    def __contains__(self, item):
+    def __contains__(self, item) -> bool:
         if isinstance(item, Matcher):
             return item._slug in self._matchers
         else:
             return item in self._matchers
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Matcher]:
         return self._matchers.values().__iter__()
 
 
