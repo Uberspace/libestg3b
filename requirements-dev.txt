@@ -8,3 +8,9 @@ tox
 
 # releasing
 twine
+
+# documenting
+sphinx
+sphinx-autobuild
+sphinx-autodoc-typehints
+sphinx_rtd_theme

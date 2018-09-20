@@ -65,6 +65,11 @@ class EstG3bBase:
 
 
 def EstG3b(country: str) -> EstG3bBase:
+    """
+    Get an instance for the given country.
+
+    :param country: ISO short code of the desired country, e.g. ``"DE"``
+    """
     try:
         country_estg3b = globals()['EstG3b' + country]()
     except (KeyError):
@@ -73,6 +78,9 @@ def EstG3b(country: str) -> EstG3bBase:
 
 
 def EstG3bs() -> List[EstG3bBase]:
+    """
+    Get a list containing instances for all implemented countries.
+    """
     return [
         clazz()
         for clazz in globals().values()

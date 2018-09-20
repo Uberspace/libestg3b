@@ -9,6 +9,8 @@ from holidays import CountryHoliday
 
 
 class Matcher():
+    """ Defines a bonus rule, e.g. "if someone works between 8pm and 6am, give them 25% more" """
+
     def __init__(self, slug, description: str, impl, *, multiply: Optional[Decimal] = None, add: Optional[Decimal] = None, tests=[]) -> None:
         self._slug = slug
         self._description = description
@@ -108,6 +110,12 @@ class DayTimeMatcher(Matcher):
 
 
 class MatcherGroup():
+    """
+    A collection of similar :class:`Matcher` instances. When the group is evaluated, only the highest matching machter is returned.
+
+    :param description: a short, human-readable text, explaining why the given matchers are grouped together.
+    :param matchers: the initial set of matchers.
+    """
     def __init__(self, description: str, matchers: Iterable[Matcher]) -> None:
         self._description = description
         self._matchers = {}  # type: Dict[str, Matcher]
@@ -116,6 +124,9 @@ class MatcherGroup():
             self.append(m)
 
     def append(self, matcher: Matcher) -> None:
+        """
+        :param matcher: matcher to add; it must not yet exist in the group.
+        """
         if matcher._slug in self._matchers:
             raise Exception(f'Slug {matcher._slug} is already in this group')
         if not isinstance(matcher, Matcher):
@@ -124,12 +135,29 @@ class MatcherGroup():
         self._matchers[matcher._slug] = matcher
 
     def match(self, minute: datetime.datetime, start: datetime.datetime, holidays: CountryHoliday) -> Optional[Matcher]:
+        """
+        Evaluate this group. The given shift is tested using each of the stored
+        matchers. The matcher with the highest bonus is the returned. If not a
+        single one matches, ``None`` is returned.
+
+        This method is to be used by :class:`libestg3b.EstG3b` only, but you can
+        use it to implement more complex scenarios yourself.
+
+        :param minute: minute to evaluate (see :class:`libestgb3.EstG3b`)
+        :param start: the first minute in this shift  (see :class:`libestgb3.EstG3b`)
+        """
         try:
             return max(filter(lambda matcher: matcher.match(minute, start, holidays), self))
         except ValueError:  # no match found
             return None
 
     def extend(self, matchers: Iterable[Matcher], replace: bool = False) -> None:
+        """
+        Add the given matchers to this group.
+
+        :param matchers:
+        :param replace: if one of the given matcher duplicates an existing one, overwrite it instead of raising an exception.
+        """
         for m in matchers:
             if replace:
                 self._matchers.pop(m._slug, None)
