@@ -44,6 +44,24 @@ $ pip install libestg3b
 ]
 ```
 
+## Development
+
+### Setup
+
+Using python 3.6, do the following:
+
+```shell
+$ virtualenv venv --python=python3.6
+$ python setup.py develop
+$ pip install -r requirements-dev.txt
+```
+
+### Usual Tasks
+
+* `make test`: run tests (use `tox` or `py.test` directly to supply flags like `-k`)
+* `make lint`: run pylava and friends
+* `make fixlint`: sort imports correctly
+
 ## Prerequisites
 
 This library is currently python 3.6+. If you would like to use this library
