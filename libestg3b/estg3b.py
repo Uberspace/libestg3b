@@ -19,8 +19,12 @@ def EstG3b(country):
     return country_estg3b
 
 
-def EstG3bs():
-    return [clazz for clazz in globals().values() if inspect.isclass(clazz) and issubclass(clazz, EstG3bBase) and clazz != EstG3bBase]
+def EstG3bs() -> List[EstG3bBase]:
+    return [
+        clazz()
+        for clazz in globals().values()
+        if inspect.isclass(clazz) and issubclass(clazz, EstG3bBase) and clazz != EstG3bBase
+    ]
 
 
 class EstG3bBase:
