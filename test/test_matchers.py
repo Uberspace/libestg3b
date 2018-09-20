@@ -15,4 +15,4 @@ def _generate_matcher_examples(e):
     itertools.chain.from_iterable(_generate_matcher_examples(e()) for e in EstG3bs())
 )
 def test_matchers(matcher, minute, start, holidays, result):
-    assert matcher(minute, start, holidays) == result
+    assert matcher.match(minute, start, holidays) == result

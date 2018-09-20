@@ -50,7 +50,7 @@ class Matcher():
                 t[1],
             ]
 
-    def __call__(self, minute: datetime.datetime, start: datetime.datetime, holidays: CountryHoliday) -> bool:
+    def match(self, minute: datetime.datetime, start: datetime.datetime, holidays: CountryHoliday) -> bool:
         narg = len(self._impl_parameters)
 
         if narg == 1:
@@ -118,7 +118,7 @@ class MatcherGroup():
 
     def match(self, minute: datetime.datetime, start: datetime.datetime, holidays: CountryHoliday) -> Optional[Matcher]:
         try:
-            return max(filter(lambda matcher: matcher(minute, start, holidays), self))
+            return max(filter(lambda matcher: matcher.match(minute, start, holidays), self))
         except ValueError:  # no match found
             return None
 

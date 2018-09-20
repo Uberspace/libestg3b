@@ -8,7 +8,7 @@ from libestg3b.matcher import DayMatcher, DayTimeMatcher, Matcher, MatcherGroup
 
 def test_matcher_init():
     m = Matcher('A', 'a', lambda x: False, add=1)
-    m(None, None, None)
+    m.match(None, None, None)
 
 
 def test_matcher_init__no_add_or_multiply():
@@ -46,13 +46,13 @@ def test_matcher_init_impl_nargs_crash(impl):
 ])
 def test_matcher_call_rtn_type(impl):
     m = Matcher('A', 'a', impl, add=1)
-    m(None, None, None)
+    m.match(None, None, None)
 
 
 def test_matcher_call_rtn_type_crash():
     m = Matcher('A', 'a', lambda x: None, add=1)
     with pytest.raises(AssertionError):
-        m(None, None, None)
+        m.match(None, None, None)
 
 
 def test_matcher_call_passing_1():
@@ -64,7 +64,7 @@ def test_matcher_call_passing_1():
         return True
 
     m = Matcher('A', 'a', impl, add=1)
-    m(0, 1, 2)
+    m.match(0, 1, 2)
     assert args == [0]
 
 
@@ -77,7 +77,7 @@ def test_matcher_call_passing_2():
         return True
 
     m = Matcher('A', 'a', impl, add=1)
-    m(0, 1, 2)
+    m.match(0, 1, 2)
     assert args == [0, 1]
 
 
@@ -90,7 +90,7 @@ def test_matcher_call_passing_3():
         return True
 
     m = Matcher('A', 'a', impl, add=1)
-    m(0, 1, 2)
+    m.match(0, 1, 2)
     assert args == [0, 1, 2]
 
 
@@ -103,7 +103,7 @@ def test_matcher_call_passing_3():
 ])
 def test_daymatcher(dt, res):
     m = DayMatcher('XXX', 12, 26, multiply=Decimal('1.25'))
-    assert m(dt, dt, None) == res
+    assert m.match(dt, dt, None) == res
 
 
 @pytest.mark.parametrize('dt,res', [
@@ -116,7 +116,7 @@ def test_daymatcher(dt, res):
 ])
 def test_daytimematcher(dt, res):
     m = DayTimeMatcher('XXX', 12, 24, 14, multiply=Decimal('1.25'))
-    assert m(dt, dt, None) == res
+    assert m.match(dt, dt, None) == res
 
 
 def test_matchergroup():
