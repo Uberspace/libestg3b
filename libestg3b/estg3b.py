@@ -11,22 +11,6 @@ from .matcher import Matcher as M
 from .matcher import MatcherGroup
 
 
-def EstG3b(country):
-    try:
-        country_estg3b = globals()['EstG3b' + country]()
-    except (KeyError):
-        raise KeyError("Country %s not available" % country)
-    return country_estg3b
-
-
-def EstG3bs() -> List[EstG3bBase]:
-    return [
-        clazz()
-        for clazz in globals().values()
-        if inspect.isclass(clazz) and issubclass(clazz, EstG3bBase) and clazz != EstG3bBase
-    ]
-
-
 class EstG3bBase:
     def __init__(self, country, groups, add_matchers=None, replace_matchers=None) -> None:
         self._holidays = holidays.CountryHoliday(country.upper())
@@ -77,6 +61,22 @@ class EstG3bBase:
 
     def calculate_shifts(self, shifts):
         return map(self.calculate_shift, shifts)
+
+
+def EstG3b(country: str) -> EstG3bBase:
+    try:
+        country_estg3b = globals()['EstG3b' + country]()
+    except (KeyError):
+        raise KeyError("Country %s not available" % country)
+    return country_estg3b
+
+
+def EstG3bs() -> List[EstG3bBase]:
+    return [
+        clazz()
+        for clazz in globals().values()
+        if inspect.isclass(clazz) and issubclass(clazz, EstG3bBase) and clazz != EstG3bBase
+    ]
 
 
 class EstG3bGermany(EstG3bBase):
