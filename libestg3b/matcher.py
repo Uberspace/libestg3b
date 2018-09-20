@@ -6,8 +6,6 @@ from typing import Dict, Iterable, Iterator, Optional, Set  # noqa: W0611
 import dateutil
 from holidays import CountryHoliday
 
-from dataclasses import dataclass
-
 
 class Matcher():
     def __init__(self, slug, description: str, impl, *, multiply: Optional[Decimal] = None, add: Optional[Decimal] = None, tests=[]) -> None:
@@ -147,8 +145,15 @@ class MatcherGroup():
         return self._matchers.values().__iter__()
 
 
-@dataclass
 class Match():
-    start: datetime.datetime
-    end: datetime.datetime
-    matchers: Set[Matcher]
+    def __init__(self, start: datetime.datetime, end: datetime.datetime, matchers: Set[Matcher]) -> None:
+        self.start = start
+        self.end = end
+        self.matchers = matchers
+
+    def __eq__(self, other):
+        if not isinstance(other, Match):
+            return False
+        if all(getattr(self, attr) == getattr(other, attr) for attr in ('start', 'end', 'matchers')):
+            return True
+        return False
