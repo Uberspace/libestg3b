@@ -2,6 +2,7 @@ import datetime
 import inspect
 import itertools
 from decimal import Decimal
+from typing import Type, List, Tuple, Iterable
 
 import holidays
 from dateutil.relativedelta import relativedelta
@@ -24,7 +25,7 @@ class EstG3bBase:
         assert self._groups
         assert all(lambda g: isinstance(g, MatcherGroup) for g in self._groups)
 
-    def _list_minutes(self, start, end):
+    def _list_minutes(self, start: datetime.datetime, end: datetime.datetime) -> Iterable[datetime.datetime]:
         start = start.replace(second=0, microsecond=0)
         end = end.replace(second=0, microsecond=0)
 
@@ -32,7 +33,7 @@ class EstG3bBase:
             yield start
             start = start + relativedelta(minutes=1)
 
-    def calculate_shift(self, shift):
+    def calculate_shift(self, shift: Tuple[datetime.datetime, datetime.datetime]) -> List[Match]:
         assert len(shift) == 2
         assert isinstance(shift[0], datetime.datetime)
         assert isinstance(shift[1], datetime.datetime)
@@ -59,7 +60,7 @@ class EstG3bBase:
 
         return matches
 
-    def calculate_shifts(self, shifts):
+    def calculate_shifts(self, shifts: List[Tuple[datetime.datetime, datetime.datetime]]) -> Iterable[List[Match]]:
         return map(self.calculate_shift, shifts)
 
 
