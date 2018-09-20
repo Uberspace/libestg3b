@@ -7,8 +7,18 @@ from libestg3b.matcher import DayMatcher, DayTimeMatcher, Matcher, MatcherGroup
 
 
 def test_matcher_init():
-    m = Matcher('A', 'a', lambda x: False, add=1)
+    m = Matcher('A', 'a', lambda x: False, add=Decimal('1'))
     m.match(None, None, None)
+
+
+def test_matcher_init_decimal_multiply():
+    with pytest.raises(AssertionError):
+        Matcher('A', 'a', lambda x: False, multiply=0.1)
+
+
+def test_matcher_init_decimal_add():
+    with pytest.raises(AssertionError):
+        Matcher('A', 'a', lambda x: False, add=0.1)
 
 
 def test_matcher_init__no_add_or_multiply():
@@ -18,7 +28,7 @@ def test_matcher_init__no_add_or_multiply():
 
 def test_matcher_init_add_and_multiply():
     with pytest.raises(AssertionError):
-        Matcher('A', 'a', lambda x: False, add=1, multiply=2)
+        Matcher('A', 'a', lambda x: False, add=Decimal('1'), multiply=Decimal('2'))
 
 
 def test_matcher_init_no_slug():
@@ -45,12 +55,12 @@ def test_matcher_init_impl_nargs_crash(impl):
     lambda a: True,
 ])
 def test_matcher_call_rtn_type(impl):
-    m = Matcher('A', 'a', impl, add=1)
+    m = Matcher('A', 'a', impl, add=Decimal('1'))
     m.match(None, None, None)
 
 
 def test_matcher_call_rtn_type_crash():
-    m = Matcher('A', 'a', lambda x: None, add=1)
+    m = Matcher('A', 'a', lambda x: None, add=Decimal('1'))
     with pytest.raises(AssertionError):
         m.match(None, None, None)
 
@@ -63,7 +73,7 @@ def test_matcher_call_passing_1():
         args = [a]
         return True
 
-    m = Matcher('A', 'a', impl, add=1)
+    m = Matcher('A', 'a', impl, add=Decimal('1'))
     m.match(0, 1, 2)
     assert args == [0]
 
@@ -76,7 +86,7 @@ def test_matcher_call_passing_2():
         args = [a, b]
         return True
 
-    m = Matcher('A', 'a', impl, add=1)
+    m = Matcher('A', 'a', impl, add=Decimal('1'))
     m.match(0, 1, 2)
     assert args == [0, 1]
 
@@ -89,7 +99,7 @@ def test_matcher_call_passing_3():
         args = [a, b, c]
         return True
 
-    m = Matcher('A', 'a', impl, add=1)
+    m = Matcher('A', 'a', impl, add=Decimal('1'))
     m.match(0, 1, 2)
     assert args == [0, 1, 2]
 
@@ -124,7 +134,7 @@ def test_matchergroup():
 
 
 def test_matchergroup_init():
-    mg = MatcherGroup('xxx', [DayMatcher('mmm', 1, 1, multiply=2)])
+    mg = MatcherGroup('xxx', [DayMatcher('mmm', 1, 1, multiply=Decimal('2'))])
     assert mg._description == 'xxx'
     assert len(mg._matchers) == 1
     assert mg._matchers['mmm']._slug == 'mmm'
@@ -133,28 +143,28 @@ def test_matchergroup_init():
 def test_matchergroup_duplicate():
     with pytest.raises(Exception):
         MatcherGroup('xxx', [
-            DayMatcher('mmm', 1, 1, multiply=2),
-            DayMatcher('mmm', 1, 1, multiply=2),
+            DayMatcher('mmm', 1, 1, multiply=Decimal('2')),
+            DayMatcher('mmm', 1, 1, multiply=Decimal('2')),
         ])
 
 
 def test_matchergroup_append():
     mg = MatcherGroup('xxx', [])
-    mg.append(DayMatcher('mmm', 1, 1, multiply=2))
+    mg.append(DayMatcher('mmm', 1, 1, multiply=Decimal('2')))
     assert len(mg._matchers) == 1
     assert mg._matchers['mmm']._slug == 'mmm'
 
 
 def test_matchergroup_contains():
-    mg = MatcherGroup('xxx', [DayMatcher('mmm', 1, 1, multiply=2)])
+    mg = MatcherGroup('xxx', [DayMatcher('mmm', 1, 1, multiply=Decimal('2'))])
     assert 'mmm' in mg
-    assert DayMatcher('mmm', 1, 1, multiply=2) in mg
+    assert DayMatcher('mmm', 1, 1, multiply=Decimal('2')) in mg
 
 
 def test_matchergroup_iter():
     mg = MatcherGroup('xxx', [
-        DayMatcher('mmm1', 1, 1, multiply=2),
-        DayMatcher('mmm2', 2, 2, multiply=2),
+        DayMatcher('mmm1', 1, 1, multiply=Decimal('2')),
+        DayMatcher('mmm2', 2, 2, multiply=Decimal('2')),
     ])
 
     i = iter(mg)
@@ -175,7 +185,7 @@ def test_matchergroup_append_non_matcher():
 
 def test_matchergroup_append_duplicate():
     mg = MatcherGroup('xxx', [])
-    mg.append(DayMatcher('mmm', 1, 1, multiply=2))
+    mg.append(DayMatcher('mmm', 1, 1, multiply=Decimal('2')))
 
     with pytest.raises(Exception):
-        mg.append(DayMatcher('mmm', 1, 1, multiply=2))
+        mg.append(DayMatcher('mmm', 1, 1, multiply=Decimal('2')))

@@ -18,7 +18,15 @@ class Matcher():
         self._add = add
         self._tests = tests
 
-        assert (multiply is None) != (add is None)
+        if multiply is not None and add is None:
+            assert isinstance(multiply, Decimal)
+            assert multiply > 0
+        elif add is not None and multiply is None:
+            assert isinstance(add, Decimal)
+            assert add > 0
+        else:
+            assert False, "provide either multiply or add, but not both."
+
         assert len(slug) > 0
         assert len(description) > 0
         assert 1 <= len(self._impl_parameters) <= 3
