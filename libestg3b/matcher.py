@@ -91,9 +91,9 @@ class Matcher():
 
 class DayMatcher(Matcher):
     """ match, if the given minute is within the given day. Keyword arguments are passed onto Matcher. """
-    def __init__(self, slug, month: int, day: int, **kwargs) -> None:
+    def __init__(self, slug: str, month: int, day: int, **kwargs) -> None:
         super().__init__(
-            slug, f'{month:02d}-{day:02d}',
+            slug, f'YYYY-{month:02d}-{day:02d}',
             lambda m: m.month == month and m.day == day,
             **kwargs,
         )
@@ -101,9 +101,9 @@ class DayMatcher(Matcher):
 
 class DayTimeMatcher(Matcher):
     """ match, if the given minute is within the given day after the given hour. Keyword arguments are passed onto Matcher. """
-    def __init__(self, slug, month: int, day: int, hour: int, **kwargs) -> None:
+    def __init__(self, slug: str, month: int, day: int, hour: int, **kwargs) -> None:
         super().__init__(
-            slug, f'{month:02d}-{day:02d} {hour:02d}:00+',
+            slug, f'YYYY-{month:02d}-{day:02d} {hour:02d}:00+',
             lambda m: m.month == month and m.day == day and m.hour >= hour,
             **kwargs,
         )
