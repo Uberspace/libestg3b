@@ -130,8 +130,8 @@ class MatcherGroup():
         except ValueError:  # no match found
             return None
 
-    def extend(self, new_matchers: Iterable[Matcher], replace: bool = False) -> None:
-        for m in new_matchers:
+    def extend(self, matchers: Iterable[Matcher], replace: bool = False) -> None:
+        for m in matchers:
             if replace:
                 self._matchers.pop(m._slug, None)
 
