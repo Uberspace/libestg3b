@@ -7,7 +7,7 @@ premium factor (e.g. 1.5) as well as the relevant time-spans.
 
 § 3b des Deutschen Einkommensteuergesetzes (EStG) definiert die Höhe der
 steuerfreien Zuschläge für Arbeit in der Nacht, an Sonntagen, Feiertagen sowie
-besondere Tage wie Neujahr. Diese Library errechnet aus einer Liste von
+besonderen Tagen wie Neujahr. Diese Library errechnet aus einer Liste von
 Arbeitszeiten die Höhe der maximalen Zuschläge.
 
 ## Installation
