@@ -155,11 +155,11 @@ class EstG3bGermany(EstG3bBase):
                         ('2018-09-11 23:59~2018-05-12 00:00', False),
                     )
                 ),
-                DayTimeMatcher('DE_CHRISTMAS_EVE', 12, 24, 14, multiply=Decimal('1.25')),
-                DayTimeMatcher('DE_NEWYEARS_EVE', 12, 31, 14, multiply=Decimal('1.25')),
-                DayMatcher('DE_CHRISTMAS', 12, 25, multiply=Decimal('1.5')),
-                DayMatcher('DE_STEFANITAG', 12, 26, multiply=Decimal('1.5')),
-                DayMatcher('DE_NEWYEARS', 5, 1, multiply=Decimal('1.5')),
+                DayTimeMatcher('DE_HEILIGABEND', 12, 24, 14, multiply=Decimal('1.25')),
+                DayTimeMatcher('DE_SILVESTER', 12, 31, 14, multiply=Decimal('1.25')),
+                DayMatcher('DE_WEIHNACHTSFEIERTAG_1', 12, 25, multiply=Decimal('1.5')),
+                DayMatcher('DE_WEIHNACHTSFEIERTAG_2', 12, 26, multiply=Decimal('1.5')),
+                DayMatcher('DE_TAGDERARBEIT', 5, 1, multiply=Decimal('1.5')),
             )),
         )
         super().__init__('DE', matchers, **kwargs)
