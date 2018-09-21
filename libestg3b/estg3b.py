@@ -42,6 +42,32 @@ class EstG3bBase:
             start = start + relativedelta(minutes=1)
 
     def calculate_shift(self, shift: Tuple[datetime.datetime, datetime.datetime]) -> List["Match"]:
+        """
+        Turn a shift into a number of matches, containing the relevant Matchers (if any),
+        which can be used to calculate the appropriate high of bonus payments.
+
+        >>> import datetime as DT
+        >>> from libestg3b import EstG3b
+        >>> e = EstG3b("DE")
+        >>> e.calculate_shift([DT.datetime(2018, 12, 24, 13), DT.datetime(2018, 12, 25, 2)])
+        [
+            Match(start=datetime.datetime(2018, 12, 24, 13, 0), end=datetime.datetime(2018, 12, 24, 14, 0), matchers=set(
+            )),
+            Match(start=datetime.datetime(2018, 12, 24, 14, 0), end=datetime.datetime(2018, 12, 24, 20, 0), matchers={
+                <Matcher: DE_HEILIGABEND YYYY-12-24 14:00+>
+            }),
+            Match(start=datetime.datetime(2018, 12, 24, 20, 0), end=datetime.datetime(2018, 12, 25, 0, 0), matchers={
+                <Matcher: DE_HEILIGABEND YYYY-12-24 14:00+>,
+                <Matcher: DE_NIGHT Nachtarbeit 20:00-06:00>
+            }),
+            Match(start=datetime.datetime(2018, 12, 25, 0, 0), end=datetime.datetime(2018, 12, 25, 2, 0), matchers={
+                <Matcher: DE_WEIHNACHTSFEIERTAG_1 YYYY-12-25>,
+                <Matcher: DE_NIGHT_00_04 Nachtarbeit 00:00-04:00 (Folgetag)>
+            })
+        ]
+
+        :param shift: a `(starttime, endtime)` tuple. Describes a shift started and `starttime` (inclusive) and ending at `endtime` (exclusive).
+        """
         assert len(shift) == 2
         assert isinstance(shift[0], datetime.datetime)
         assert isinstance(shift[1], datetime.datetime)
@@ -69,6 +95,11 @@ class EstG3bBase:
         return matches
 
     def calculate_shifts(self, shifts: List[Tuple[datetime.datetime, datetime.datetime]]) -> Iterator[List["Match"]]:
+        """
+        Behaves just like :meth:`calculate_shift`, but takes a list of shifts and returns a list of list of matches.
+
+        :param shifts:
+        """
         return map(self.calculate_shift, shifts)
 
 
@@ -103,7 +134,7 @@ class Match():
 
     :param start: the (inclusive) time this shift part starts at
     :param end: the (exclusive) time this shift part ends at
-    :param matchers: all the relevant Matcher instances
+    :param matchers: all the relevant Matcher instances. May be empty to indicate, that no match has been found.
     """
     start: datetime.datetime
     end: datetime.datetime
