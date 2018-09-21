@@ -25,6 +25,7 @@ setup(
         'holidays',
         'pytz',
         'python-dateutil',
+        'dataclasses',
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
