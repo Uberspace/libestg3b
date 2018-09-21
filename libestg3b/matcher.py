@@ -41,7 +41,7 @@ class Matcher():
         default = datetime.datetime(2018, 1, 10)
         return dateutil.parser.parse(tt, default=default) if tt else default
 
-    def examples(self):
+    def _examples(self):
         for t in self._tests:
             start, minute = t[0].split('~')
             minute = self._parse_test_time(minute)
