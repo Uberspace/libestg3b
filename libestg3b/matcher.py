@@ -5,7 +5,7 @@ from inspect import signature
 from typing import Dict, Iterable, Iterator, Optional, Set  # noqa: W0611
 
 import dateutil
-from holidays import CountryHoliday
+import holidays
 
 
 class Matcher():
@@ -59,7 +59,7 @@ class Matcher():
                 t[1],
             ]
 
-    def match(self, minute: datetime.datetime, start: datetime.datetime, holidays: CountryHoliday) -> bool:
+    def match(self, minute: datetime.datetime, start: datetime.datetime, holidays: holidays.HolidayBase) -> bool:
         narg = len(self._impl_parameters)
 
         if narg == 1:
@@ -134,7 +134,7 @@ class MatcherGroup():
 
         self._matchers[matcher._slug] = matcher
 
-    def match(self, minute: datetime.datetime, start: datetime.datetime, holidays: CountryHoliday) -> Optional[Matcher]:
+    def match(self, minute: datetime.datetime, start: datetime.datetime, holidays: holidays.HolidayBase) -> Optional[Matcher]:
         """
         Evaluate this group. The given shift is tested using each of the stored
         matchers. The matcher with the highest bonus is the returned. If not a
