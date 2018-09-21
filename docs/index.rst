@@ -12,7 +12,13 @@ Welcome to libestg3b's documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
    self
+
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Packages:
+
    libestg3b
+   libestg3b.matcher
