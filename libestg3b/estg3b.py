@@ -130,7 +130,8 @@ def EstG3bs() -> List[EstG3bBase]:
 @dataclasses.dataclass
 class Match():
     """
-    A Match is the final result of the calculation process.
+    The final result of the calculation process. It links time worked to additional
+    payments (or the information that none are relevant).
 
     :param start: the (inclusive) time this shift part starts at
     :param end: the (exclusive) time this shift part ends at
