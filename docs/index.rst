@@ -6,15 +6,13 @@
 Welcome to libestg3b's documentation!
 =====================================
 
+.. include:: ../README.rst
+    :start-line: 3
+
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+   self
    libestg3b
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

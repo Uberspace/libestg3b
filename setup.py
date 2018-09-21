@@ -16,8 +16,8 @@ setup(
     author='uberspace.de',
     author_email='hallo@uberspace.de',
     url='https://github.com/uberspace/libestg3b',
-    long_description=open(path.abspath(path.dirname(__file__)) + '/README.md').read(),
-    long_description_content_type='text/markdown',
+    long_description=open(path.abspath(path.dirname(__file__)) + '/README.rst').read(),
+    long_description_content_type='text/x-rst',
     packages=[
         'libestg3b',
     ],
