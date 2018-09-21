@@ -1,8 +1,7 @@
 import datetime as DT
 import itertools
 
-from libestg3b import EstG3b
-from libestg3b.matcher import Match
+from libestg3b import EstG3b, Match
 
 
 def _matchers(e, *slugs):

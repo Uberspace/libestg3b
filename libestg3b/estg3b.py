@@ -1,13 +1,15 @@
+import dataclasses
 import datetime
 import inspect
 import itertools
 from decimal import Decimal
-from typing import Iterator, List, Tuple
+from typing import Iterator, List, Tuple, Set
 
 import holidays
 from dateutil.relativedelta import relativedelta
 
-from .matcher import DayMatcher, DayTimeMatcher, Match
+from .matcher import DayMatcher, DayTimeMatcher
+from .matcher import Matcher
 from .matcher import Matcher as M
 from .matcher import MatcherGroup
 
@@ -39,7 +41,7 @@ class EstG3bBase:
             yield start
             start = start + relativedelta(minutes=1)
 
-    def calculate_shift(self, shift: Tuple[datetime.datetime, datetime.datetime]) -> List[Match]:
+    def calculate_shift(self, shift: Tuple[datetime.datetime, datetime.datetime]) -> List["Match"]:
         assert len(shift) == 2
         assert isinstance(shift[0], datetime.datetime)
         assert isinstance(shift[1], datetime.datetime)
@@ -66,7 +68,7 @@ class EstG3bBase:
 
         return matches
 
-    def calculate_shifts(self, shifts: List[Tuple[datetime.datetime, datetime.datetime]]) -> Iterator[List[Match]]:
+    def calculate_shifts(self, shifts: List[Tuple[datetime.datetime, datetime.datetime]]) -> Iterator[List["Match"]]:
         return map(self.calculate_shift, shifts)
 
 
@@ -92,6 +94,20 @@ def EstG3bs() -> List[EstG3bBase]:
         for clazz in globals().values()
         if inspect.isclass(clazz) and issubclass(clazz, EstG3bBase) and clazz != EstG3bBase
     ]
+
+
+@dataclasses.dataclass
+class Match():
+    """
+    A Match is the final result of the calculation process.
+
+    :param start: the (inclusive) time this shift part starts at
+    :param end: the (exclusive) time this shift part ends at
+    :param matchers: all the relevant Matcher instances
+    """
+    start: datetime.datetime
+    end: datetime.datetime
+    matchers: Set[Matcher]
 
 
 class EstG3bGermany(EstG3bBase):

@@ -1,4 +1,3 @@
-import dataclasses
 import datetime
 from decimal import Decimal
 from inspect import signature
@@ -253,10 +252,3 @@ class MatcherGroup():
 
     def __iter__(self) -> Iterator[Matcher]:
         return self._matchers.values().__iter__()
-
-
-@dataclasses.dataclass
-class Match():
-    start: datetime.datetime
-    end: datetime.datetime
-    matchers: Set[Matcher]
