@@ -52,7 +52,12 @@ class Matcher():
 
     @property
     def _bonus(self):
-        return self._multiply if self._multiply else self._add
+        if self._multiply:
+            return ('multiply', self._multiply)
+        if self._add:
+            return ('add', self._add)
+
+        assert False
 
     def _parse_test_time(self, tt):
         default = datetime.datetime(2018, 1, 10)
@@ -126,9 +131,13 @@ class Matcher():
         return self._slug == other._slug
 
     def __gt__(self, other):
+        if self._bonus[0] != other._bonus[0]:
+            raise Exception("cannot compare multiply to add matchers")
         return self._bonus > other._bonus
 
     def __lt__(self, other):
+        if self._bonus[0] != other._bonus[0]:
+            raise Exception("cannot compare multiply to add matchers")
         return self._bonus < other._bonus
 
 

@@ -104,6 +104,34 @@ def test_matcher_call_passing_3():
     assert args == [0, 1, 2]
 
 
+def test_macher_ltgt_add():
+    m1 = Matcher('A', 'a', lambda f: True, add=Decimal('1'))
+    m2 = Matcher('A', 'a', lambda f: True, add=Decimal('2'))
+    assert m1 < m2
+    assert not(m2 < m1)
+    assert m2 > m1
+    assert not(m1 > m2)
+
+
+def test_macher_ltgt_multiply():
+    m1 = Matcher('A', 'a', lambda f: True, multiply=Decimal('1'))
+    m2 = Matcher('A', 'a', lambda f: True, multiply=Decimal('2'))
+    assert m1 < m2
+    assert not(m2 < m1)
+    assert m2 > m1
+    assert not(m1 > m2)
+
+
+def test_macher_ltgt_incompatible():
+    m1 = Matcher('A', 'a', lambda f: True, add=Decimal('1'))
+    m2 = Matcher('A', 'a', lambda f: True, multiply=Decimal('2'))
+
+    with pytest.raises(Exception):
+        m1 < m2
+    with pytest.raises(Exception):
+        m1 > m2
+
+
 @pytest.mark.parametrize('dt,res', [
     (datetime.datetime(2018, 12, 25, 23, 59), False),
     (datetime.datetime(2018, 12, 26, 0), True),
