@@ -204,15 +204,14 @@ class MatcherGroup():
     def __init__(self, description: str, matchers: Iterable[Matcher]) -> None:
         self._description = description
         self._matchers = {}  # type: Dict[str, Matcher]
+        self.extend(matchers)
 
-        for m in matchers:
-            self.append(m)
-
-    def append(self, matcher: Matcher) -> None:
+    def append(self, matcher: Matcher, replace: bool = False) -> None:
         """
         :param matcher: matcher to add; it must not yet exist in the group.
+        :param replace: if matcher duplicates an existing one, overwrite it.
         """
-        if matcher._slug in self._matchers:
+        if matcher._slug in self._matchers and not replace:
             raise Exception(f'Slug {matcher._slug} is already in this group')
         if not isinstance(matcher, Matcher):
             raise Exception('Matchers must be derived from libestg3b.Matcher')
@@ -244,10 +243,7 @@ class MatcherGroup():
         :param replace: if one of the given matcher duplicates an existing one, overwrite it instead of raising an exception.
         """
         for m in matchers:
-            if replace:
-                self._matchers.pop(m._slug, None)
-
-            self.append(m)
+            self.append(m, replace)
 
     def __contains__(self, item) -> bool:
         if isinstance(item, Matcher):

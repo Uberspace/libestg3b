@@ -155,6 +155,54 @@ def test_matchergroup_append():
     assert mg._matchers['mmm']._slug == 'mmm'
 
 
+def test_matchergroup_append_duplicate():
+    mg = MatcherGroup('xxx', [])
+    mg.append(DayMatcher('mmm', 1, 1, multiply=Decimal('2')))
+    with pytest.raises(Exception):
+        mg.append(DayMatcher('mmm', 1, 1, multiply=Decimal('2')))
+    assert len(mg._matchers) == 1
+    assert mg._matchers['mmm']._slug == 'mmm'
+
+
+def test_matchergroup_append_replace():
+    mg = MatcherGroup('xxx', [])
+    mg.append(DayMatcher('mmm', 1, 1, multiply=Decimal('2')))
+    mg.append(DayMatcher('mmm', 1, 1, multiply=Decimal('3')), replace=True)
+    assert len(mg._matchers) == 1
+    assert mg._matchers['mmm']._slug == 'mmm'
+    assert mg._matchers['mmm']._multiply == Decimal("3")
+
+
+def test_matchergroup_extend():
+    mg = MatcherGroup('xxx', [])
+    mg.extend([
+        DayMatcher('mmm1', 1, 1, multiply=Decimal('2')),
+        DayMatcher('mmm2', 1, 2, multiply=Decimal('2')),
+        DayMatcher('mmm3', 1, 3, multiply=Decimal('2')),
+    ])
+    assert len(mg._matchers) == 3
+    assert mg._matchers['mmm1']._slug == 'mmm1'
+    assert mg._matchers['mmm2']._slug == 'mmm2'
+    assert mg._matchers['mmm3']._slug == 'mmm3'
+
+
+def test_matchergroup_extend_duplicate():
+    mg = MatcherGroup('xxx', [])
+    mg.append(DayMatcher('mmm', 1, 1, multiply=Decimal('2')))
+    with pytest.raises(Exception):
+        mg.extend([DayMatcher('mmm', 1, 1, multiply=Decimal('3'))])
+    assert len(mg._matchers) == 1
+    assert mg._matchers['mmm']._multiply == Decimal("2")
+
+
+def test_matchergroup_extend_replace():
+    mg = MatcherGroup('xxx', [])
+    mg.append(DayMatcher('mmm', 1, 1, multiply=Decimal('2')))
+    mg.extend([DayMatcher('mmm', 1, 1, multiply=Decimal('3'))], replace=True)
+    assert len(mg._matchers) == 1
+    assert mg._matchers['mmm']._multiply == Decimal("3")
+
+
 def test_matchergroup_contains():
     mg = MatcherGroup('xxx', [DayMatcher('mmm', 1, 1, multiply=Decimal('2'))])
     assert 'mmm' in mg
