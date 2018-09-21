@@ -85,10 +85,6 @@ class Matcher():
         minute is provided, to enable rules like (worked after midnight, but
         started before).
 
-        :param minute: current minute to be matched
-        :param start: very fist minute in this shift
-        :param holidays: holidays in the currently active country (see `python-holidays <https://github.com/dr-prodigy/python-holidays>`_)
-
         >>> from decimal import Decimal
         >>> import datetime as DT
         >>> from libestg3b.matcher import Matcher
@@ -107,6 +103,10 @@ class Matcher():
         # the checked minute is not, so we don't match.
         >>> m.match(DT.datetime(2018, 2, 3, 1), DT.datetime(2018, 2, 2, 23), None)
         False
+
+        :param minute: current minute to be matched
+        :param start: very fist minute in this shift
+        :param holidays: holidays in the currently active country (see `python-holidays <https://github.com/dr-prodigy/python-holidays>`_)
         """
         narg = len(self._impl_parameters)
 
@@ -147,12 +147,6 @@ class DayMatcher(Matcher):
     increase pay on days, which are not official holidays, but still get a
     special treatment in the law (for example: 31th of December in Germany).
 
-    :param slug: machine-readable name of this matcher, see :class:`Matcher`
-    :param month: only match, if shift is within this month, counted from 1 = January
-    :param day: only match, if shift is on this day, counted from 1
-
-    Additionally all keyword arguments defined for :class:`Matcher` can be used.
-
     >>> from decimal import Decimal
     >>> import datetime as DT
     >>> from libestg3b.matcher import DayMatcher
@@ -163,6 +157,12 @@ class DayMatcher(Matcher):
     True
     >>> m.match(DT.datetime(2018, 10, 30, 13), DT.datetime(2018, 10, 30, 12), None)
     False
+
+    :param slug: machine-readable name of this matcher, see :class:`Matcher`
+    :param month: only match, if shift is within this month, counted from 1 = January
+    :param day: only match, if shift is on this day, counted from 1
+
+    Additionally all keyword arguments defined for :class:`Matcher` can be used.
     """
     def __init__(self, slug: str, month: int, day: int, **kwargs) -> None:
         super().__init__(
@@ -176,13 +176,6 @@ class DayTimeMatcher(Matcher):
     """
     Like :class:`DayMatcher`, but additionally require the shift to be after a certain time.
 
-    :param slug: machine-readable name of this matcher, see :class:`Matcher`
-    :param month: only match, if shift is within this month, counted from 1 = January
-    :param day: only match, if shift is on this day, counted from 1
-    :param hour: only match, if shift is after or in this hour. Supplying ``14`` results in ``14:00`` to ``24:00`` to be matched.
-
-    Additionally all keyword arguments defined for :class:`Matcher` can be used.
-
     >>> from decimal import Decimal
     >>> import datetime as DT
     >>> from libestg3b.matcher import DayTimeMatcher
@@ -193,6 +186,13 @@ class DayTimeMatcher(Matcher):
     False
     >>> m.match(DT.datetime(2018, 12, 31, 14), DT.datetime(2018,12, 31, 14), None)
     True
+
+    :param slug: machine-readable name of this matcher, see :class:`Matcher`
+    :param month: only match, if shift is within this month, counted from 1 = January
+    :param day: only match, if shift is on this day, counted from 1
+    :param hour: only match, if shift is after or in this hour. Supplying ``14`` results in ``14:00`` to ``24:00`` to be matched.
+
+    Additionally all keyword arguments defined for :class:`Matcher` can be used.
     """
     def __init__(self, slug: str, month: int, day: int, hour: int, **kwargs) -> None:
         super().__init__(
