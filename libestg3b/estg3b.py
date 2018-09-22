@@ -3,7 +3,7 @@ import datetime
 import inspect
 import itertools
 from decimal import Decimal
-from typing import Iterator, List, Tuple, Set
+from typing import Iterator, List, Tuple, Type, Set
 
 import holidays
 from dateutil.relativedelta import relativedelta
@@ -105,25 +105,25 @@ class EstG3bBase:
         return map(self.calculate_shift, shifts)
 
 
-def EstG3b(country: str) -> EstG3bBase:
+def EstG3b(country: str) -> Type[EstG3bBase]:
     """
-    Get an instance for the given country.
+    Get the implementation class for the given country.
 
     :param country: ISO short code of the desired country, e.g. ``"DE"``
     """
     try:
-        country_estg3b = globals()['EstG3b' + country]()
+        country_estg3b = globals()['EstG3b' + country]
     except (KeyError):
         raise KeyError("Country %s not available" % country)
     return country_estg3b
 
 
-def EstG3bs() -> List[EstG3bBase]:
+def EstG3bs() -> List[Type[EstG3bBase]]:
     """
-    Get a list containing instances for all implemented countries.
+    Get a list containing implementation classes for all implemented countries.
     """
     return [
-        clazz()
+        clazz
         for clazz in globals().values()
         if inspect.isclass(clazz) and issubclass(clazz, EstG3bBase) and clazz != EstG3bBase
     ]

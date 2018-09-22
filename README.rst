@@ -27,7 +27,7 @@ Usage
 
     >>> import datetime as DT
     >>> from libestg3b import EstG3b
-    >>> e = EstG3b('DE')
+    >>> e = EstG3b('DE')()
     >>> e.calculate_shift([datetime(2018, 9, 16, 20), datetime(2018, 9, 17, 2)])
     [
         Match(
