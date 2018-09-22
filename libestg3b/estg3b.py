@@ -17,16 +17,16 @@ from .matcher import MatcherGroup
 class EStG3bBase:
     def __init__(self, country, groups, add_matchers=None, replace_matchers=None) -> None:
         self._holidays = holidays.CountryHoliday(country.upper())
-        self._groups = groups
+        self._groups = list(groups)
 
         if replace_matchers:
             self._groups = replace_matchers.copy()
 
         if add_matchers:
-            old_grps = dict((g.slug, g) for g in self._groups)
+            old_grps = dict((g._slug, g) for g in self._groups)
             for new_grp in add_matchers:
-                if new_grp.slug in old_grps:
-                    old_grps[new_grp.slug].extend(new_grp, replace=True)
+                if new_grp._slug in old_grps:
+                    old_grps[new_grp._slug].extend(new_grp, replace=True)
                 else:
                     self._groups.append(new_grp)
 

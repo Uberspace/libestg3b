@@ -1,8 +1,10 @@
 import datetime as DT
+from decimal import Decimal
 import itertools
 
 import pytest
 from libestg3b import EStG3b, EStG3bBase, Match
+from libestg3b.matcher import Matcher, MatcherGroup
 
 
 def _matchers(e, *slugs):
@@ -84,3 +86,39 @@ def test_estg3b_calculate_shifts():
     assert len(matches[1]) == 2
     assert matches[1][0] == Match(DT.datetime(2018, 2, 3, 2), DT.datetime(2018, 2, 3, 6), _matchers(e, 'DE_NIGHT'))
     assert matches[1][1] == Match(DT.datetime(2018, 2, 3, 6), DT.datetime(2018, 2, 3, 7), set())
+
+
+def test_estg3b_add_matchers():
+    e = EStG3b('DE')(
+        add_matchers=[
+            MatcherGroup('SSPECIAL_GRP1', 'One very special group', matchers=[]),
+            MatcherGroup('SSPECIAL_GRP2', 'Two very special group', matchers=[]),
+        ]
+    )
+
+    assert 'SSPECIAL_GRP1' in (g._slug for g in e._groups)
+    assert 'SSPECIAL_GRP2' in (g._slug for g in e._groups)
+
+
+def test_estg3b_add_matchers_extend():
+    e = EStG3b('DE')(
+        add_matchers=[
+            MatcherGroup('GRP_DE_NIGHT', '', matchers=[
+                Matcher('SPECIAL', 'Special', lambda m: True, multiply=Decimal("1")),
+            ]),
+        ]
+    )
+
+    group = dict((g._slug, g) for g in e._groups)['GRP_DE_NIGHT']
+    assert 'SPECIAL' in group
+
+
+def test_estg3b_replace_matchers():
+    e = EStG3b('DE')(
+        replace_matchers=[
+            MatcherGroup('SSPECIAL_GRP', 'One very special group', matchers=[]),
+        ]
+    )
+
+    assert len(e._groups) == 1
+    assert e._groups[0]._slug == 'SSPECIAL_GRP'
