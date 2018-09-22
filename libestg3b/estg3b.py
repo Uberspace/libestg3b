@@ -4,8 +4,6 @@ import itertools
 from decimal import Decimal
 from typing import Iterator, List, Set, Tuple, Type
 
-from dateutil.relativedelta import relativedelta
-
 import dataclasses
 import holidays
 
@@ -43,7 +41,7 @@ class EStG3bBase:
 
         while start < end:
             yield start
-            start = start + relativedelta(minutes=1)
+            start = start + datetime.timedelta(minutes=1)
 
     def calculate_shift(self, shift: Tuple[datetime.datetime, datetime.datetime]) -> List["Match"]:
         """
@@ -91,10 +89,10 @@ class EStG3bBase:
 
             if matches and matches[-1].matchers == minute_matchers:
                 # combine equal matches by increasing the length of the last one
-                matches[-1].end = matches[-1].end + relativedelta(minutes=1)
+                matches[-1].end = matches[-1].end + datetime.timedelta(minutes=1)
             else:
                 # a list of minutes is inclusive the last one, the `end` stamp is exclusive
-                matches.append(Match(minute, minute + relativedelta(minutes=1), minute_matchers))
+                matches.append(Match(minute, minute + datetime.timedelta(minutes=1), minute_matchers))
 
         return matches
 

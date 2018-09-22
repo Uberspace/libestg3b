@@ -70,7 +70,7 @@ class Matcher():
             start = self._parse_test_time(start)
 
             if minute.time() < start.time():
-                minute = minute + dateutil.relativedelta.relativedelta(days=1)
+                minute = minute + datetime.timedelta(days=1)
 
             yield [
                 minute,
