@@ -94,9 +94,9 @@ can be released as follows.
 
 .. code-block:: console
 
-    rm dist/*
-    python setup.py sdist bdist_wheel
-    twine upload dist/*
+    $ rm dist/*
+    $ python setup.py sdist bdist_wheel
+    $ twine upload dist/*
 
 Prerequisites
 -------------
