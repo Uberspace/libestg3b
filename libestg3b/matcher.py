@@ -5,7 +5,6 @@ from typing import (Callable, Dict, Iterable, Iterator,  # noqa: W0611
                     Optional, Set)
 
 import dateutil
-
 import holidays
 
 

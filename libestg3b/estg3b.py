@@ -1,10 +1,10 @@
+import dataclasses  # isort:skip
 import datetime
 import inspect
 import itertools
 from decimal import Decimal
 from typing import Iterator, List, Set, Tuple, Type
 
-import dataclasses
 import holidays
 
 from .matcher import DayMatcher, DayTimeMatcher
