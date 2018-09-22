@@ -50,3 +50,21 @@ def test_estg3b_sunday_plus_night():
     assert isinstance(match, list)
     assert len(match) == 1
     assert match[0] == Match(DT.datetime(2018, 9, 16, 20), DT.datetime(2018, 9, 16, 22), _matchers(e, 'DE_NIGHT', 'DE_SUNDAY'))
+
+
+def test_estg3b_calculate_shifts():
+    e = EstG3b('DE')
+    matches = e.calculate_shifts([
+        [DT.datetime(2018, 2, 1, 2), DT.datetime(2018, 2, 1, 6)],
+        [DT.datetime(2018, 2, 3, 2), DT.datetime(2018, 2, 3, 7)],
+    ])
+    matches = list(matches)
+
+    assert len(matches) == 2
+
+    assert len(matches[0]) == 1
+    assert matches[0][0] == Match(DT.datetime(2018, 2, 1, 2), DT.datetime(2018, 2, 1, 6), _matchers(e, 'DE_NIGHT'))
+
+    assert len(matches[1]) == 2
+    assert matches[1][0] == Match(DT.datetime(2018, 2, 3, 2), DT.datetime(2018, 2, 3, 6), _matchers(e, 'DE_NIGHT'))
+    assert matches[1][1] == Match(DT.datetime(2018, 2, 3, 6), DT.datetime(2018, 2, 3, 7), set())
