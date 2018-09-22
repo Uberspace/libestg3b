@@ -10,4 +10,4 @@ fixlint:
 
 .PHONY: test
 test:
-	-tox
+	tox
