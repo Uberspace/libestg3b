@@ -221,6 +221,12 @@ def test_matchergroup_append_non_matcher(matcher_group):
         matcher_group.append("bla")
 
 
+def test_matchergroup_append_wrong_type(matcher_group):
+    matcher_group.append(DayMatcher('mmm1', 1, 1, multiply=Decimal('2')))
+    with pytest.raises(Exception):
+        matcher_group.append(DayMatcher('mmm2', 2, 2, add=Decimal('2')))
+
+
 def test_matchergroup_extend(matcher_group):
     matcher_group.extend([
         DayMatcher('mmm1', 1, 1, multiply=Decimal('2')),

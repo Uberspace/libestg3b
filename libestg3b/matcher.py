@@ -226,6 +226,11 @@ class MatcherGroup():
         if not isinstance(matcher, Matcher):
             raise Exception('Matchers must be derived from libestg3b.Matcher')
 
+        if self._matchers:
+            my_type = next(iter(self._matchers.values()))._bonus[0]
+            if my_type != matcher._bonus[0]:
+                raise Exception(f'cannot add a {matcher._bonus[0]} matcher to a group containing {my_type} matchers.')
+
         self._matchers[matcher._slug] = matcher
 
     def match(self, minute: datetime.datetime, start: datetime.datetime, holidays: holidays.HolidayBase) -> Optional[Matcher]:
