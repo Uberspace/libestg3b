@@ -6,6 +6,24 @@ import pytest
 from libestg3b.matcher import DayMatcher, DayTimeMatcher, Matcher, MatcherGroup
 
 
+@pytest.fixture
+def make_matcher_group():
+    def m(**kwargs):
+        return MatcherGroup(**{
+            "slug": "SM_GRP",
+            "description": "Some Matcher Group",
+            "matchers": [],
+            **kwargs,
+        })
+
+    return m
+
+
+@pytest.fixture
+def matcher_group(make_matcher_group):
+    return make_matcher_group()
+
+
 def test_matcher_init():
     m = Matcher('A', 'a', lambda x: False, add=Decimal('1'))
     m.match(None, None, None)
@@ -158,11 +176,11 @@ def test_daytimematcher(dt, res):
 
 
 def test_matchergroup():
-    MatcherGroup('xxx', [])
+    MatcherGroup('XXX', 'xxx', [])
 
 
 def test_matchergroup_init():
-    mg = MatcherGroup('xxx', [DayMatcher('mmm', 1, 1, multiply=Decimal('2'))])
+    mg = MatcherGroup('XXX', 'xxx', [DayMatcher('mmm', 1, 1, multiply=Decimal('2'))])
     assert mg._description == 'xxx'
     assert len(mg._matchers) == 1
     assert mg._matchers['mmm']._slug == 'mmm'
@@ -170,75 +188,74 @@ def test_matchergroup_init():
 
 def test_matchergroup_duplicate():
     with pytest.raises(Exception):
-        MatcherGroup('xxx', [
+        MatcherGroup('XXX', 'xxx', [
             DayMatcher('mmm', 1, 1, multiply=Decimal('2')),
             DayMatcher('mmm', 1, 1, multiply=Decimal('2')),
         ])
 
 
-def test_matchergroup_append():
-    mg = MatcherGroup('xxx', [])
-    mg.append(DayMatcher('mmm', 1, 1, multiply=Decimal('2')))
-    assert len(mg._matchers) == 1
-    assert mg._matchers['mmm']._slug == 'mmm'
+def test_matchergroup_append(matcher_group):
+    matcher_group.append(DayMatcher('mmm', 1, 1, multiply=Decimal('2')))
+    assert len(matcher_group._matchers) == 1
+    assert matcher_group._matchers['mmm']._slug == 'mmm'
 
 
-def test_matchergroup_append_duplicate():
-    mg = MatcherGroup('xxx', [])
-    mg.append(DayMatcher('mmm', 1, 1, multiply=Decimal('2')))
+def test_matchergroup_append_duplicate(matcher_group):
+    matcher_group.append(DayMatcher('mmm', 1, 1, multiply=Decimal('2')))
     with pytest.raises(Exception):
-        mg.append(DayMatcher('mmm', 1, 1, multiply=Decimal('2')))
-    assert len(mg._matchers) == 1
-    assert mg._matchers['mmm']._slug == 'mmm'
+        matcher_group.append(DayMatcher('mmm', 1, 1, multiply=Decimal('2')))
+    assert len(matcher_group._matchers) == 1
+    assert matcher_group._matchers['mmm']._slug == 'mmm'
 
 
-def test_matchergroup_append_replace():
-    mg = MatcherGroup('xxx', [])
-    mg.append(DayMatcher('mmm', 1, 1, multiply=Decimal('2')))
-    mg.append(DayMatcher('mmm', 1, 1, multiply=Decimal('3')), replace=True)
-    assert len(mg._matchers) == 1
-    assert mg._matchers['mmm']._slug == 'mmm'
-    assert mg._matchers['mmm']._multiply == Decimal("3")
+def test_matchergroup_append_replace(matcher_group):
+    matcher_group.append(DayMatcher('mmm', 1, 1, multiply=Decimal('2')))
+    matcher_group.append(DayMatcher('mmm', 1, 1, multiply=Decimal('3')), replace=True)
+    assert len(matcher_group._matchers) == 1
+    assert matcher_group._matchers['mmm']._slug == 'mmm'
+    assert matcher_group._matchers['mmm']._multiply == Decimal("3")
 
 
-def test_matchergroup_extend():
-    mg = MatcherGroup('xxx', [])
-    mg.extend([
+def test_matchergroup_append_non_matcher(matcher_group):
+    with pytest.raises(Exception):
+        matcher_group.append("bla")
+
+
+def test_matchergroup_extend(matcher_group):
+    matcher_group.extend([
         DayMatcher('mmm1', 1, 1, multiply=Decimal('2')),
         DayMatcher('mmm2', 1, 2, multiply=Decimal('2')),
         DayMatcher('mmm3', 1, 3, multiply=Decimal('2')),
     ])
-    assert len(mg._matchers) == 3
-    assert mg._matchers['mmm1']._slug == 'mmm1'
-    assert mg._matchers['mmm2']._slug == 'mmm2'
-    assert mg._matchers['mmm3']._slug == 'mmm3'
+    assert len(matcher_group._matchers) == 3
+    assert matcher_group._matchers['mmm1']._slug == 'mmm1'
+    assert matcher_group._matchers['mmm2']._slug == 'mmm2'
+    assert matcher_group._matchers['mmm3']._slug == 'mmm3'
 
 
-def test_matchergroup_extend_duplicate():
-    mg = MatcherGroup('xxx', [])
-    mg.append(DayMatcher('mmm', 1, 1, multiply=Decimal('2')))
+def test_matchergroup_extend_duplicate(matcher_group):
+    matcher_group.append(DayMatcher('mmm', 1, 1, multiply=Decimal('2')))
     with pytest.raises(Exception):
-        mg.extend([DayMatcher('mmm', 1, 1, multiply=Decimal('3'))])
-    assert len(mg._matchers) == 1
-    assert mg._matchers['mmm']._multiply == Decimal("2")
+        matcher_group.extend([DayMatcher('mmm', 1, 1, multiply=Decimal('3'))])
+    assert len(matcher_group._matchers) == 1
+    assert matcher_group._matchers['mmm']._multiply == Decimal("2")
 
 
-def test_matchergroup_extend_replace():
-    mg = MatcherGroup('xxx', [])
-    mg.append(DayMatcher('mmm', 1, 1, multiply=Decimal('2')))
-    mg.extend([DayMatcher('mmm', 1, 1, multiply=Decimal('3'))], replace=True)
-    assert len(mg._matchers) == 1
-    assert mg._matchers['mmm']._multiply == Decimal("3")
+def test_matchergroup_extend_replace(matcher_group):
+    matcher_group.append(DayMatcher('mmm', 1, 1, multiply=Decimal('2')))
+    matcher_group.extend([DayMatcher('mmm', 1, 1, multiply=Decimal('3'))], replace=True)
+    assert len(matcher_group._matchers) == 1
+    assert matcher_group._matchers['mmm']._multiply == Decimal("3")
 
 
-def test_matchergroup_contains():
-    mg = MatcherGroup('xxx', [DayMatcher('mmm', 1, 1, multiply=Decimal('2'))])
+def test_matchergroup_contains(make_matcher_group):
+    mg = make_matcher_group(matchers=[DayMatcher('mmm', 1, 1, multiply=Decimal('2'))])
     assert 'mmm' in mg
     assert DayMatcher('mmm', 1, 1, multiply=Decimal('2')) in mg
 
 
-def test_matchergroup_iter():
-    mg = MatcherGroup('xxx', [
+def test_matchergroup_iter(make_matcher_group):
+    mg = make_matcher_group(matchers=[
         DayMatcher('mmm1', 1, 1, multiply=Decimal('2')),
         DayMatcher('mmm2', 2, 2, multiply=Decimal('2')),
     ])
@@ -250,18 +267,3 @@ def test_matchergroup_iter():
 
     with pytest.raises(StopIteration):
         next(i)
-
-
-def test_matchergroup_append_non_matcher():
-    mg = MatcherGroup('xxx', [])
-
-    with pytest.raises(Exception):
-        mg.append("bla")
-
-
-def test_matchergroup_append_duplicate():
-    mg = MatcherGroup('xxx', [])
-    mg.append(DayMatcher('mmm', 1, 1, multiply=Decimal('2')))
-
-    with pytest.raises(Exception):
-        mg.append(DayMatcher('mmm', 1, 1, multiply=Decimal('2')))

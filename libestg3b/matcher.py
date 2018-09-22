@@ -206,10 +206,12 @@ class MatcherGroup():
     """
     A collection of similar :class:`Matcher` instances. When the group is evaluated, only the highest matching machter is returned.
 
+    :param slug: a machine and human-ish readable name for this matcher, must not change.
     :param description: a short, human-readable text, explaining why the given matchers are grouped together.
     :param matchers: the initial set of matchers.
     """
-    def __init__(self, description: str, matchers: Iterable[Matcher]) -> None:
+    def __init__(self, slug: str, description: str, matchers: Iterable[Matcher]) -> None:
+        self._slug = slug
         self._description = description
         self._matchers = {}  # type: Dict[str, Matcher]
         self.extend(matchers)

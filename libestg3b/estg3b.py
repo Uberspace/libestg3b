@@ -145,7 +145,7 @@ class Match():
 class EstG3bGermany(EstG3bBase):
     def __init__(self, **kwargs):
         matchers = (
-            MatcherGroup('Nachtarbeit', (
+            MatcherGroup('GRP_DE_NIGHT', 'Nachtarbeit', (
                 M(
                     'DE_NIGHT', 'Nachtarbeit 20:00-06:00',
                     lambda m: m.hour >= 20 or m.hour < 6, multiply=Decimal('0.25'),
@@ -168,7 +168,7 @@ class EstG3bGermany(EstG3bBase):
                     )
                 ),
             )),
-            MatcherGroup('Sonntags und Feiertagsarbeit', (
+            MatcherGroup('GRP_HOLIDAYS', 'Sonntags und Feiertagsarbeit', (
                 M(
                     'DE_SUNDAY', 'Sonntagsarbeit',
                     lambda m: m.weekday() == 6, multiply=Decimal('0.5'),
