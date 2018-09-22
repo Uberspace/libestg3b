@@ -1,9 +1,10 @@
 import datetime as DT
-from decimal import Decimal
 import itertools
+from decimal import Decimal
 
 import pytest
-from libestg3b import EStG3b, EStG3bBase, Match
+
+from libestg3b import EStG3b, Match
 from libestg3b.matcher import Matcher, MatcherGroup
 
 

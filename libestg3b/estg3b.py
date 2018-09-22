@@ -1,17 +1,19 @@
-import dataclasses
 import datetime
 import inspect
 import itertools
 from decimal import Decimal
-from typing import Iterator, List, Tuple, Type, Set
+from typing import Iterator, List, Set, Tuple, Type
 
-import holidays
 from dateutil.relativedelta import relativedelta
 
+import dataclasses
+import holidays
+
 from .matcher import DayMatcher, DayTimeMatcher
-from .matcher import Matcher
 from .matcher import Matcher as M
 from .matcher import MatcherGroup
+
+from .matcher import Matcher  # isort:skip
 
 
 class EStG3bBase:

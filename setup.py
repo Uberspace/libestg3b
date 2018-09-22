@@ -1,6 +1,7 @@
 from __future__ import print_function
-from os import path
+
 import sys
+from os import path
 
 try:
     from setuptools import setup
