@@ -34,6 +34,8 @@ class EstG3bBase:
         assert all(lambda g: isinstance(g, MatcherGroup) for g in self._groups)
 
     def _list_minutes(self, start: datetime.datetime, end: datetime.datetime) -> Iterator[datetime.datetime]:
+        assert start < end
+
         start = start.replace(second=0, microsecond=0)
         end = end.replace(second=0, microsecond=0)
 

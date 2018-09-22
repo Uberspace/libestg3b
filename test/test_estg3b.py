@@ -1,7 +1,8 @@
 import datetime as DT
 import itertools
 
-from libestg3b import EstG3b, Match
+import pytest
+from libestg3b import EstG3b, EstG3bBase, Match
 
 
 def _matchers(e, *slugs):
@@ -17,6 +18,21 @@ def _matchers(e, *slugs):
         raise LookupError('Could not find ' + ' '.join(slugs))
 
     return found
+
+
+def test_estg3b_list_minutes():
+    e = EstG3b('DE')
+    minutes = e._list_minutes(DT.datetime(2018, 10, 1, 5, 10, 13), DT.datetime(2018, 10, 1, 9, 10))
+    minutes = list(minutes)
+    assert len(minutes) == 4*60
+    assert minutes[0] == DT.datetime(2018, 10, 1, 5, 10)
+    assert minutes[-1] == DT.datetime(2018, 10, 1, 9, 9)
+
+
+def test_estg3b_list_minutes_wrong_order():
+    e = EstG3b('DE')
+    with pytest.raises(Exception):
+        list(e._list_minutes(DT.datetime(2018, 10, 1), DT.datetime(2018, 9, 1)))
 
 
 def test_estg3b_calculate_shift():
