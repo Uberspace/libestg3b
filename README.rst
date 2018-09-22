@@ -1,6 +1,18 @@
 libestg3b
 #########
 
+.. image:: https://travis-ci.com/Uberspace/libestg3b.svg?branch=master
+    :target: https://travis-ci.com/Uberspace/libestg3b
+    :alt: Documentation Status
+
+.. image:: https://readthedocs.org/projects/libestg3b/badge/?version=latest
+    :target: https://libestg3b.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
+
+.. image:: https://img.shields.io/pypi/v/libestg3b.svg
+    :target: https://pypi.python.org/pypi/libestg3b
+    :alt: PyPI
+
 § 3b of the German Einkommensteuergesetz (EStG) defines the premiums for work on
 weekends, holidays and special days, like new year. This library takes a list of
 work hours / shifts (e.g. on 2018-06-03 from 19:00 until 03:00) and returns the
