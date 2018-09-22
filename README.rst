@@ -70,8 +70,7 @@ Using python 3.6, do the following:
 .. code-block:: console
 
     $ virtualenv venv --python=python3.6
-    $ python setup.py develop
-    $ pip install -r requirements-dev.txt
+    $ pip install -e ".[dev]"
 
 Usual Tasks
 ^^^^^^^^^^^

@@ -28,6 +28,23 @@ setup(
         'python-dateutil',
         'dataclasses',
     ],
+    extras_require={
+        'dev': [
+            # linting
+            'pylava==0.2.*',
+            'isort==4.3.*',
+            # testing
+            'pytest==3.8.*',
+            'tox',
+            # releasing
+            'twine',
+            # documenting
+            'sphinx',
+            'sphinx-autobuild',
+            'sphinx-autodoc-typehints',
+            'sphinx_rtd_theme',
+        ],
+    },
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
