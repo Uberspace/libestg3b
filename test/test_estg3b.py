@@ -2,7 +2,7 @@ import datetime as DT
 import itertools
 
 import pytest
-from libestg3b import EstG3b, EstG3bBase, Match
+from libestg3b import EStG3b, EStG3bBase, Match
 
 
 def _matchers(e, *slugs):
@@ -21,7 +21,7 @@ def _matchers(e, *slugs):
 
 
 def test_estg3b_list_minutes():
-    e = EstG3b('DE')()
+    e = EStG3b('DE')()
     minutes = e._list_minutes(DT.datetime(2018, 10, 1, 5, 10, 13), DT.datetime(2018, 10, 1, 9, 10))
     minutes = list(minutes)
     assert len(minutes) == 4*60
@@ -30,13 +30,13 @@ def test_estg3b_list_minutes():
 
 
 def test_estg3b_list_minutes_wrong_order():
-    e = EstG3b('DE')()
+    e = EStG3b('DE')()
     with pytest.raises(Exception):
         list(e._list_minutes(DT.datetime(2018, 10, 1), DT.datetime(2018, 9, 1)))
 
 
 def test_estg3b_calculate_shift():
-    e = EstG3b('DE')()
+    e = EStG3b('DE')()
     match = e.calculate_shift([DT.datetime(2018, 2, 1, 2), DT.datetime(2018, 2, 1, 6)])
     assert isinstance(match, list)
     assert len(match) == 1
@@ -44,7 +44,7 @@ def test_estg3b_calculate_shift():
 
 
 def test_estg3b_calculate_shift_multimatch():
-    e = EstG3b('DE')()
+    e = EStG3b('DE')()
     match = e.calculate_shift([DT.datetime(2018, 2, 1, 2), DT.datetime(2018, 2, 1, 7)])
     assert isinstance(match, list)
     assert len(match) == 2
@@ -53,7 +53,7 @@ def test_estg3b_calculate_shift_multimatch():
 
 
 def test_estg3b_calculate_shift_nomatch():
-    e = EstG3b('DE')()
+    e = EStG3b('DE')()
     match = e.calculate_shift([DT.datetime(2018, 2, 1, 8), DT.datetime(2018, 2, 1, 9)])
     assert isinstance(match, list)
     assert len(match) == 1
@@ -61,7 +61,7 @@ def test_estg3b_calculate_shift_nomatch():
 
 
 def test_estg3b_calculate_shift_sunday_plus_night():
-    e = EstG3b('DE')()
+    e = EStG3b('DE')()
     match = e.calculate_shift([DT.datetime(2018, 9, 16, 20), DT.datetime(2018, 9, 16, 22)])
     assert isinstance(match, list)
     assert len(match) == 1
@@ -69,7 +69,7 @@ def test_estg3b_calculate_shift_sunday_plus_night():
 
 
 def test_estg3b_calculate_shifts():
-    e = EstG3b('DE')()
+    e = EStG3b('DE')()
     matches = e.calculate_shifts([
         [DT.datetime(2018, 2, 1, 2), DT.datetime(2018, 2, 1, 6)],
         [DT.datetime(2018, 2, 3, 2), DT.datetime(2018, 2, 3, 7)],

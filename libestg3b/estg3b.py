@@ -14,7 +14,7 @@ from .matcher import Matcher as M
 from .matcher import MatcherGroup
 
 
-class EstG3bBase:
+class EStG3bBase:
     def __init__(self, country, groups, add_matchers=None, replace_matchers=None) -> None:
         self._holidays = holidays.CountryHoliday(country.upper())
         self._groups = groups
@@ -49,8 +49,8 @@ class EstG3bBase:
         which can be used to calculate the appropriate high of bonus payments.
 
         >>> import datetime as DT
-        >>> from libestg3b import EstG3b
-        >>> e = EstG3b("DE")
+        >>> from libestg3b import EStG3b
+        >>> e = EStG3b("DE")
         >>> e.calculate_shift([DT.datetime(2018, 12, 24, 13), DT.datetime(2018, 12, 25, 2)])
         [
             Match(start=datetime.datetime(2018, 12, 24, 13, 0), end=datetime.datetime(2018, 12, 24, 14, 0), matchers=set(
@@ -105,27 +105,27 @@ class EstG3bBase:
         return map(self.calculate_shift, shifts)
 
 
-def EstG3b(country: str) -> Type[EstG3bBase]:
+def EStG3b(country: str) -> Type[EStG3bBase]:
     """
     Get the implementation class for the given country.
 
     :param country: ISO short code of the desired country, e.g. ``"DE"``
     """
     try:
-        country_estg3b = globals()['EstG3b' + country]
+        country_estg3b = globals()['EStG3b' + country]
     except (KeyError):
         raise KeyError("Country %s not available" % country)
     return country_estg3b
 
 
-def EstG3bs() -> List[Type[EstG3bBase]]:
+def EStG3bs() -> List[Type[EStG3bBase]]:
     """
     Get a list containing implementation classes for all implemented countries.
     """
     return [
         clazz
         for clazz in globals().values()
-        if inspect.isclass(clazz) and issubclass(clazz, EstG3bBase) and clazz != EstG3bBase
+        if inspect.isclass(clazz) and issubclass(clazz, EStG3bBase) and clazz != EStG3bBase
     ]
 
 
@@ -144,7 +144,7 @@ class Match():
     matchers: Set[Matcher]
 
 
-class EstG3bGermany(EstG3bBase):
+class EStG3bGermany(EStG3bBase):
     def __init__(self, **kwargs):
         matchers = (
             MatcherGroup('GRP_DE_NIGHT', 'Nachtarbeit', (
@@ -229,4 +229,4 @@ class EstG3bGermany(EstG3bBase):
         super().__init__('DE', matchers, **kwargs)
 
 
-EstG3bDE = EstG3bGermany
+EStG3bDE = EStG3bGermany

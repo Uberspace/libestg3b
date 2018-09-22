@@ -1,8 +1,8 @@
-from .estg3b import EstG3b, EstG3bBase, EstG3bs, Match
+from .estg3b import EStG3b, EStG3bBase, EStG3bs, Match
 
 __all__ = [
-  "EstG3b",
-  "EstG3bs",
-  "EstG3bBase",
+  "EStG3b",
+  "EStG3bs",
+  "EStG3bBase",
   "Match",
 ]

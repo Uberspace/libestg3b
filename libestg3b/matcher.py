@@ -234,11 +234,11 @@ class MatcherGroup():
         matchers. The matcher with the highest bonus is the returned. If not a
         single one matches, ``None`` is returned.
 
-        This method is normally used by :class:`libestg3b.EstG3b`, but you can
+        This method is normally used by :class:`libestg3b.EStG3b`, but you can
         use it to implement more complex scenarios yourself.
 
-        :param minute: minute to evaluate (see :class:`libestgb3.EstG3b`)
-        :param start: the first minute in this shift  (see :class:`libestgb3.EstG3b`)
+        :param minute: minute to evaluate (see :class:`libestgb3.EStG3b`)
+        :param start: the first minute in this shift  (see :class:`libestgb3.EStG3b`)
         """
         try:
             return max(filter(lambda matcher: matcher.match(minute, start, holidays), self))
