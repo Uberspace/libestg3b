@@ -22,3 +22,4 @@ Welcome to libestg3b's documentation!
 
    libestg3b
    libestg3b.matcher
+   libestg3b.countries

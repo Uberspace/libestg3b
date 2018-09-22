@@ -2,7 +2,7 @@ import itertools
 
 import pytest
 
-from libestg3b.estg3b import EStG3bs
+from libestg3b import EStG3bs
 
 
 def _generate_matcher_examples(e):
