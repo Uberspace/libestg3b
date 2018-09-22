@@ -19,7 +19,7 @@ def _matchers(e, *slugs):
     return found
 
 
-def test_estg3b():
+def test_estg3b_calculate_shift():
     e = EstG3b('DE')
     match = e.calculate_shift([DT.datetime(2018, 2, 1, 2), DT.datetime(2018, 2, 1, 6)])
     assert isinstance(match, list)
@@ -27,7 +27,7 @@ def test_estg3b():
     assert match[0] == Match(DT.datetime(2018, 2, 1, 2), DT.datetime(2018, 2, 1, 6), _matchers(e, 'DE_NIGHT'))
 
 
-def test_estg3b_multimatch():
+def test_estg3b_calculate_shift_multimatch():
     e = EstG3b('DE')
     match = e.calculate_shift([DT.datetime(2018, 2, 1, 2), DT.datetime(2018, 2, 1, 7)])
     assert isinstance(match, list)
@@ -36,7 +36,7 @@ def test_estg3b_multimatch():
     assert match[1] == Match(DT.datetime(2018, 2, 1, 6), DT.datetime(2018, 2, 1, 7), set())
 
 
-def test_estg3b_nomatch():
+def test_estg3b_calculate_shift_nomatch():
     e = EstG3b('DE')
     match = e.calculate_shift([DT.datetime(2018, 2, 1, 8), DT.datetime(2018, 2, 1, 9)])
     assert isinstance(match, list)
@@ -44,7 +44,7 @@ def test_estg3b_nomatch():
     assert match[0] == Match(DT.datetime(2018, 2, 1, 8), DT.datetime(2018, 2, 1, 9), set())
 
 
-def test_estg3b_sunday_plus_night():
+def test_estg3b_calculate_shift_sunday_plus_night():
     e = EstG3b('DE')
     match = e.calculate_shift([DT.datetime(2018, 9, 16, 20), DT.datetime(2018, 9, 16, 22)])
     assert isinstance(match, list)
