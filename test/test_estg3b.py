@@ -4,7 +4,7 @@ from decimal import Decimal
 
 import pytest
 
-from libestg3b import EStG3b, Match
+from libestg3b import EStG3b, EStG3bBase, EStG3bs, Match
 from libestg3b.matcher import Matcher, MatcherGroup
 
 
@@ -21,6 +21,22 @@ def _matchers(e, *slugs):
         raise LookupError('Could not find ' + ' '.join(slugs))
 
     return found
+
+
+def test_estg3b_invalid_country():
+    with pytest.raises(Exception):
+        EStG3b('MENOEXISTING')
+
+
+def test_estg3b():
+    assert issubclass(EStG3b('DE'), EStG3bBase)
+
+
+def test_estg3bs():
+    es = EStG3bs()
+    assert len(es) == 1
+    langs = [e.aliases[0] for e in es]
+    assert 'GERMANY' in langs
 
 
 def test_estg3b_list_minutes():

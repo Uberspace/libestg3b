@@ -122,6 +122,18 @@ def test_matcher_call_passing_3():
     assert args == [0, 1, 2]
 
 
+def test_macher_eq():
+    m1 = Matcher('A', 'a', lambda f: True, add=Decimal('1'))
+    m2 = Matcher('A', 'a', lambda f: True, add=Decimal('2'))
+    assert m1 == m2
+
+
+def test_macher_str():
+    m = Matcher('SLUG', 'description', lambda f: True, add=Decimal('1'))
+    assert 'SLUG' in str(m)
+    assert 'description' in str(m)
+
+
 def test_macher_ltgt_add():
     m1 = Matcher('A', 'a', lambda f: True, add=Decimal('1'))
     m2 = Matcher('A', 'a', lambda f: True, add=Decimal('2'))
