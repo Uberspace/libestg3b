@@ -27,7 +27,7 @@ class EStG3bGermany(EStG3bBase):
                     ),
                 ),
                 M(
-                    'DE_NIGHT_00_04', 'Nachtarbeit 00:00-04:00 (Folgetag)',
+                    'DE_NIGHT_START_YESTERDAY', 'Nachtarbeit 00:00-04:00 (Folgetag)',
                     lambda m, s: 0 <= m.hour < 4 and s.date() < m.date(), multiply=Decimal('0.4'),
                     tests=(
                         ('00:00~00:01', False),

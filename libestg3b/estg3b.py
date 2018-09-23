@@ -60,7 +60,7 @@ class EStG3bBase:
             }),
             Match(start=datetime.datetime(2018, 12, 25, 0, 0), end=datetime.datetime(2018, 12, 25, 2, 0), matchers={
                 <Matcher: DE_WEIHNACHTSFEIERTAG_1 YYYY-12-25>,
-                <Matcher: DE_NIGHT_00_04 Nachtarbeit 00:00-04:00 (Folgetag)>
+                <Matcher: DE_NIGHT_START_YESTERDAY Nachtarbeit 00:00-04:00 (Folgetag)>
             })
         ]
 
