@@ -13,6 +13,13 @@ Welcome to libestg3b's documentation!
 
 
 .. toctree::
+   :hidden:
+   :caption: Guides:
+
+   how_to_use
+
+
+.. toctree::
    :maxdepth: 2
    :hidden:
    :caption: Packages:
