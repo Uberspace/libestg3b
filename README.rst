@@ -75,9 +75,9 @@ Using python 3.6, do the following:
 Usual Tasks
 ^^^^^^^^^^^
 
-* `make test`: run tests (use `tox` or `py.test` directly to supply flags like `-k`)
-* `make lint`: run pylava and friends
-* `make fixlint`: sort imports correctly
+* ``make test``: run tests (use ``tox`` or ``py.test`` directly to supply flags like ``-k``)
+* ``make lint``: run pylava and friends
+* ``make fixlint``: sort imports correctly
 
 Releasing a new version
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -85,10 +85,10 @@ Releasing a new version
 Assuming you have been handed the required credentials, a new version
 can be released as follows.
 
-1. adapt the version in `setup.py`, according to [semver](http://semver.org/)
-2. commit this change as `Version 1.2.3`
-3. tag the resulting commit as `v1.2.3`
-4. push the new tag as well as the `master` branch
+1. adapt the version in ``setup.py``, according to `semver`_.
+2. commit this change as ``Version 1.2.3``
+3. tag the resulting commit as ``v1.2.3``
+4. push the new tag as well as the ``master`` branch
 5. update the package on PyPI:
 
 .. code-block:: console
@@ -107,7 +107,7 @@ around.
 Versioning
 ----------
 
-New version numbers are assigned following [semver](http://semver.org/). All
+New version numbers are assigned following `semver`_. All
 0.x.y versions are tested and usable, but do not have a stable public interface.
 
 A version 1.0 will be released, once we deem the library stable.
@@ -116,3 +116,5 @@ License
 -------
 
 All code in this repository is licensed under the MIT license.
+
+.. _semver: http://semver.org/
