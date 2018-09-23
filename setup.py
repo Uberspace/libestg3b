@@ -35,6 +35,7 @@ setup(
             'isort==4.3.*',
             # testing
             'pytest==3.8.*',
+            'pytest-cov',
             'tox',
             # releasing
             'twine',
