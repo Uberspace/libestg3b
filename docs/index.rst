@@ -12,12 +12,14 @@ Welcome to libestg3b's documentation!
 
 .. toctree::
    :maxdepth: 2
+   :hidden:
 
    self
 
 
 .. toctree::
    :maxdepth: 2
+   :hidden:
    :caption: Packages:
 
    libestg3b
