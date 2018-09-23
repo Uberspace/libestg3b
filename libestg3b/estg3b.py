@@ -1,6 +1,7 @@
 import dataclasses  # isort:skip
 import datetime
 import itertools
+from decimal import Decimal
 from typing import Iterator, List, Set, Tuple
 
 import holidays
@@ -114,3 +115,27 @@ class Match():
     start: datetime.datetime
     end: datetime.datetime
     matchers: Set[Matcher]
+
+    def __repr__(self):
+        matchers = '+'.join(m._slug for m in self.matchers)
+        if not matchers:
+            matchers = 'None'
+        return f'<Match {self.start.isoformat()}~{self.end.isoformat()}, {matchers}, add={self.bonus_add}, multiply={self.bonus_multiply}>'
+
+    def _sum_bonus(self, t):
+        return sum(m._bonus[1] for m in self.matchers if m._bonus[0] == t)
+
+    @property
+    def bonus_multiply(self) -> Decimal:
+        """ the height of the bonus, as a factor to add e.g. ``Decimal(0.2)`` => 20%. """
+        return self._sum_bonus('multiply')
+
+    @property
+    def bonus_add(self) -> Decimal:
+        """ the total amount of monetary units to add as a bonus, e.g. ``Decimal(5)`` => 5€. """
+        return self._sum_bonus('add')
+
+    @property
+    def hours(self) -> Decimal:
+        """ the number of hours this Match covers, e.g. ``Decimal(1.5)`` """
+        return Decimal((self.end - self.start).seconds) / 60 / 60
