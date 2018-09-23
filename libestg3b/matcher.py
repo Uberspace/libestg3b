@@ -220,10 +220,10 @@ class MatcherGroup():
         :param matcher: matcher to add; it must not yet exist in the group.
         :param replace: if matcher duplicates an existing one, overwrite it.
         """
-        if matcher._slug in self._matchers and not replace:
-            raise Exception(f'Slug {matcher._slug} is already in this group')
         if not isinstance(matcher, Matcher):
             raise Exception('Matchers must be derived from libestg3b.Matcher')
+        if matcher._slug in self._matchers and not replace:
+            raise Exception(f'Slug {matcher._slug} is already in this group')
 
         if self._matchers:
             my_type = next(iter(self._matchers.values()))._bonus[0]
