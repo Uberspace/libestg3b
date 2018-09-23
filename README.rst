@@ -18,10 +18,16 @@ weekends, holidays and special days, like new year. This library takes a list of
 work hours / shifts (e.g. on 2018-06-03 from 19:00 until 03:00) and returns the
 premium factor (e.g. 1.5) as well as the relevant time-spans.
 
+As noted in the license, this software is provided without any warranty or
+guarantee for correctness.
+
 § 3b des Deutschen Einkommensteuergesetzes (EStG) definiert die Höhe der
 steuerfreien Zuschläge für Arbeit in der Nacht, an Sonntagen, Feiertagen sowie
 besonderen Tagen wie Neujahr. Diese Library errechnet aus einer Liste von
 Arbeitszeiten die Höhe der maximalen Zuschläge.
+
+Diese Software wird, wie in der Lizenz angegeben, ohne Gewähr und Garantie
+auf Richtigkeit bereitgestellt.
 
 Installation
 ------------
