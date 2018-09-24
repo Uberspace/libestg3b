@@ -17,6 +17,7 @@ Welcome to libestg3b's documentation!
    :caption: Guides:
 
    how_to_use
+   adding_rules
 
 
 .. toctree::
