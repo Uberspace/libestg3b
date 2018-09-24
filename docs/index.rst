@@ -15,6 +15,7 @@ Welcome to libestg3b's documentation!
 .. toctree::
    :hidden:
    :caption: Guides:
+   :numbered:
 
    how_to_use
    adding_rules
