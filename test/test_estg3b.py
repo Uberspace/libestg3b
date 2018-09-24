@@ -5,17 +5,17 @@ from decimal import Decimal
 import pytest
 
 from libestg3b import EStG3b, EStG3bBase, EStG3bs, Match
-from libestg3b.matcher import Matcher, MatcherGroup
+from libestg3b.rule import Rule, RuleGroup
 
 
-def _matchers(e, *slugs):
+def _rules(e, *slugs):
     found = set()
     slugs = set(slugs)
 
-    for matcher in itertools.chain.from_iterable(e._groups):
-        if matcher._slug in slugs:
-            found.add(matcher)
-            slugs.remove(matcher._slug)
+    for rule in itertools.chain.from_iterable(e._groups):
+        if rule._slug in slugs:
+            found.add(rule)
+            slugs.remove(rule._slug)
 
     if slugs:
         raise LookupError('Could not find ' + ' '.join(slugs))
@@ -59,7 +59,7 @@ def test_estg3bbase_calculate_shift():
     match = e.calculate_shift([DT.datetime(2018, 2, 1, 2), DT.datetime(2018, 2, 1, 6)])
     assert isinstance(match, list)
     assert len(match) == 1
-    assert match[0] == Match(DT.datetime(2018, 2, 1, 2), DT.datetime(2018, 2, 1, 6), _matchers(e, 'DE_NIGHT'))
+    assert match[0] == Match(DT.datetime(2018, 2, 1, 2), DT.datetime(2018, 2, 1, 6), _rules(e, 'DE_NIGHT'))
 
 
 def test_estg3bbase_calculate_shift_multimatch():
@@ -67,7 +67,7 @@ def test_estg3bbase_calculate_shift_multimatch():
     match = e.calculate_shift([DT.datetime(2018, 2, 1, 2), DT.datetime(2018, 2, 1, 7)])
     assert isinstance(match, list)
     assert len(match) == 2
-    assert match[0] == Match(DT.datetime(2018, 2, 1, 2), DT.datetime(2018, 2, 1, 6), _matchers(e, 'DE_NIGHT'))
+    assert match[0] == Match(DT.datetime(2018, 2, 1, 2), DT.datetime(2018, 2, 1, 6), _rules(e, 'DE_NIGHT'))
     assert match[1] == Match(DT.datetime(2018, 2, 1, 6), DT.datetime(2018, 2, 1, 7), set())
 
 
@@ -84,7 +84,7 @@ def test_estg3bbase_calculate_shift_sunday_plus_night():
     match = e.calculate_shift([DT.datetime(2018, 9, 16, 20), DT.datetime(2018, 9, 16, 22)])
     assert isinstance(match, list)
     assert len(match) == 1
-    assert match[0] == Match(DT.datetime(2018, 9, 16, 20), DT.datetime(2018, 9, 16, 22), _matchers(e, 'DE_NIGHT', 'DE_SUNDAY'))
+    assert match[0] == Match(DT.datetime(2018, 9, 16, 20), DT.datetime(2018, 9, 16, 22), _rules(e, 'DE_NIGHT', 'DE_SUNDAY'))
 
 
 def test_estg3bbase_calculate_shifts():
@@ -98,18 +98,18 @@ def test_estg3bbase_calculate_shifts():
     assert len(matches) == 2
 
     assert len(matches[0]) == 1
-    assert matches[0][0] == Match(DT.datetime(2018, 2, 1, 2), DT.datetime(2018, 2, 1, 6), _matchers(e, 'DE_NIGHT'))
+    assert matches[0][0] == Match(DT.datetime(2018, 2, 1, 2), DT.datetime(2018, 2, 1, 6), _rules(e, 'DE_NIGHT'))
 
     assert len(matches[1]) == 2
-    assert matches[1][0] == Match(DT.datetime(2018, 2, 3, 2), DT.datetime(2018, 2, 3, 6), _matchers(e, 'DE_NIGHT'))
+    assert matches[1][0] == Match(DT.datetime(2018, 2, 3, 2), DT.datetime(2018, 2, 3, 6), _rules(e, 'DE_NIGHT'))
     assert matches[1][1] == Match(DT.datetime(2018, 2, 3, 6), DT.datetime(2018, 2, 3, 7), set())
 
 
-def test_estg3bbase_add_matchers():
+def test_estg3bbase_add_rules():
     e = EStG3b('DE')(
-        add_matchers=[
-            MatcherGroup('SSPECIAL_GRP1', 'One very special group', matchers=[]),
-            MatcherGroup('SSPECIAL_GRP2', 'Two very special group', matchers=[]),
+        add_rules=[
+            RuleGroup('SSPECIAL_GRP1', 'One very special group', rules=[]),
+            RuleGroup('SSPECIAL_GRP2', 'Two very special group', rules=[]),
         ]
     )
 
@@ -117,11 +117,11 @@ def test_estg3bbase_add_matchers():
     assert 'SSPECIAL_GRP2' in (g._slug for g in e._groups)
 
 
-def test_estg3bbase_add_matchers_extend():
+def test_estg3bbase_add_rules_extend():
     e = EStG3b('DE')(
-        add_matchers=[
-            MatcherGroup('GRP_DE_NIGHT', '', matchers=[
-                Matcher('SPECIAL', 'Special', lambda m: True, multiply=Decimal("1")),
+        add_rules=[
+            RuleGroup('GRP_DE_NIGHT', '', rules=[
+                Rule('SPECIAL', 'Special', lambda m: True, multiply=Decimal("1")),
             ]),
         ]
     )
@@ -130,10 +130,10 @@ def test_estg3bbase_add_matchers_extend():
     assert 'SPECIAL' in group
 
 
-def test_estg3bbase_replace_matchers():
+def test_estg3bbase_replace_rules():
     e = EStG3b('DE')(
-        replace_matchers=[
-            MatcherGroup('SSPECIAL_GRP', 'One very special group', matchers=[]),
+        replace_rules=[
+            RuleGroup('SSPECIAL_GRP', 'One very special group', rules=[]),
         ]
     )
 

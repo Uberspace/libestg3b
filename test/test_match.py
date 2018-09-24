@@ -4,13 +4,13 @@ from decimal import Decimal
 import pytest
 
 from libestg3b import Match
-from libestg3b.matcher import Matcher
+from libestg3b.rule import Rule
 
 
-def make_matcher(slug, **kwargs):
-    return Matcher(
-        'M_' + slug,
-        'Matcher',
+def make_rule(slug, **kwargs):
+    return Rule(
+        'R_' + slug,
+        'Rule',
         lambda m: True,
         **kwargs,
     )
@@ -22,8 +22,8 @@ def match():
         DT.datetime(2018, 1, 1, 0),
         DT.datetime(2018, 1, 1, 2, 30),
         [
-            make_matcher('m25', multiply=Decimal('0.25')), make_matcher('m5', multiply=Decimal('0.5')),
-            make_matcher('a5', add=Decimal(5)), make_matcher('a3', add=Decimal(3)),
+            make_rule('m25', multiply=Decimal('0.25')), make_rule('m5', multiply=Decimal('0.5')),
+            make_rule('a5', add=Decimal(5)), make_rule('a3', add=Decimal(3)),
         ]
     )
 
@@ -34,7 +34,7 @@ def test_match(match):
     assert match.bonus_add == Decimal(8)
 
 
-def test_match_no_matchers():
+def test_match_no_rules():
     match = Match(DT.datetime(2018, 1, 1, 0), DT.datetime(2018, 1, 1, 2, 30), [])
     assert match.hours == Decimal(2.5)
     assert match.bonus_multiply == Decimal(0)

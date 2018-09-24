@@ -8,18 +8,18 @@ import dateutil
 import holidays
 
 
-class Matcher():
+class Rule():
     """
     Given a work shift, calculate if a defined bonus rule (e.g. "24th of december
     pays 50% more") is to be applied / matches.
 
-    :param slug: a machine and human-ish readable name for this matcher (see below).
+    :param slug: a machine and human-ish readable name for this rule (see below).
     :param description: a human readable short-form description
     :param impl: actual matching function, accepting one, two or three parameters.
     :param multiply: heigth of the bonus, as a factor. Supplying `0.25` results in a pay increase of 25%.
     :param add: heigth of the bonus, as an absolute currency value. Either ``multiply`` or ``add`` must be given, but not both.
 
-    The actual logic of a matcher is passed in via the ``impl`` parameter. This
+    The actual logic of a rule is passed in via the ``impl`` parameter. This
     function must accept 1-3 arguments: ``minute``, ``start`` and ``holidays``.
     Refer to :meth:`match` for the meaning of those parameters.
     """
@@ -86,8 +86,8 @@ class Matcher():
 
         >>> from decimal import Decimal
         >>> import datetime as DT
-        >>> from libestg3b.matcher import Matcher
-        >>> m = Matcher("NIGHT", "Nachtarbeit", lambda m, f: m.hour >= 20, multiply=Decimal(2))
+        >>> from libestg3b.rule import Rule
+        >>> m = Rule("NIGHT", "Nachtarbeit", lambda m, f: m.hour >= 20, multiply=Decimal(2))
         # Shift started at 2018-02-02 21:00 and this is the first minute: match!
         >>> m.match(DT.datetime(2018, 2, 2, 21), DT.datetime(2018, 2, 2, 21), None)
         True
@@ -121,7 +121,7 @@ class Matcher():
         return r
 
     def __repr__(self):
-        return f'<Matcher: {self._slug} {self._description}>'
+        return f'<Rule: {self._slug} {self._description}>'
 
     def __hash__(self):
         return hash(self._slug)
@@ -131,16 +131,16 @@ class Matcher():
 
     def __gt__(self, other):
         if self._bonus[0] != other._bonus[0]:
-            raise Exception("cannot compare multiply to add matchers")
+            raise Exception("cannot compare multiply to add rules")
         return self._bonus > other._bonus
 
     def __lt__(self, other):
         if self._bonus[0] != other._bonus[0]:
-            raise Exception("cannot compare multiply to add matchers")
+            raise Exception("cannot compare multiply to add rules")
         return self._bonus < other._bonus
 
 
-class DayMatcher(Matcher):
+class DayRule(Rule):
     """
     Match, if the given minute is within the given day. This can be useful to
     increase pay on days, which are not official holidays, but still get a
@@ -148,20 +148,20 @@ class DayMatcher(Matcher):
 
     >>> from decimal import Decimal
     >>> import datetime as DT
-    >>> from libestg3b.matcher import DayMatcher
-    >>> m = DayMatcher("Helloween", 10, 31, multiply=Decimal("2"))
+    >>> from libestg3b.rule import DayRule
+    >>> m = DayRule("Helloween", 10, 31, multiply=Decimal("2"))
     >>> m
-    <Matcher: Helloween YYYY-10-31>
+    <Rule: Helloween YYYY-10-31>
     >>> m.match(DT.datetime(2018, 10, 31, 13), DT.datetime(2018, 10, 31, 12), None)
     True
     >>> m.match(DT.datetime(2018, 10, 30, 13), DT.datetime(2018, 10, 30, 12), None)
     False
 
-    :param slug: machine-readable name of this matcher, see :class:`Matcher`
+    :param slug: machine-readable name of this rule, see :class:`Rule`
     :param month: only match, if shift is within this month, counted from 1 = January
     :param day: only match, if shift is on this day, counted from 1
 
-    Additionally all keyword arguments defined for :class:`Matcher` can be used.
+    Additionally all keyword arguments defined for :class:`Rule` can be used.
     """
     def __init__(self, slug: str, month: int, day: int, **kwargs) -> None:
         super().__init__(
@@ -171,27 +171,27 @@ class DayMatcher(Matcher):
         )
 
 
-class DayTimeMatcher(Matcher):
+class DayTimeRule(Rule):
     """
-    Like :class:`DayMatcher`, but additionally require the shift to be after a certain time.
+    Like :class:`DayRule`, but additionally require the shift to be after a certain time.
 
     >>> from decimal import Decimal
     >>> import datetime as DT
-    >>> from libestg3b.matcher import DayTimeMatcher
-    >>> m = DayTimeMatcher("NEWYEARSEVE", 12, 31, 14, multiply=Decimal("1"))
+    >>> from libestg3b.rule import DayTimeRule
+    >>> m = DayTimeRule("NEWYEARSEVE", 12, 31, 14, multiply=Decimal("1"))
     >>> m
-    <Matcher: NEWYEARSEVE YYYY-12-31 14:00+>
+    <Rule: NEWYEARSEVE YYYY-12-31 14:00+>
     >>> m.match(DT.datetime(2018, 12, 31, 13), DT.datetime(2018,12, 31, 13), None)
     False
     >>> m.match(DT.datetime(2018, 12, 31, 14), DT.datetime(2018,12, 31, 14), None)
     True
 
-    :param slug: machine-readable name of this matcher, see :class:`Matcher`
+    :param slug: machine-readable name of this rule, see :class:`Rule`
     :param month: only match, if shift is within this month, counted from 1 = January
     :param day: only match, if shift is on this day, counted from 1
     :param hour: only match, if shift is after or in this hour. Supplying ``14`` results in ``14:00`` to ``24:00`` to be matched.
 
-    Additionally all keyword arguments defined for :class:`Matcher` can be used.
+    Additionally all keyword arguments defined for :class:`Rule` can be used.
     """
     def __init__(self, slug: str, month: int, day: int, hour: int, **kwargs) -> None:
         super().__init__(
@@ -201,41 +201,41 @@ class DayTimeMatcher(Matcher):
         )
 
 
-class MatcherGroup():
+class RuleGroup():
     """
-    A collection of similar :class:`Matcher` instances. When the group is evaluated, only the highest matching machter is returned.
+    A collection of similar :class:`Rule` instances. When the group is evaluated, only the highest matching machter is returned.
 
-    :param slug: a machine and human-ish readable name for this matcher, must not change.
-    :param description: a short, human-readable text, explaining why the given matchers are grouped together.
-    :param matchers: the initial set of matchers.
+    :param slug: a machine and human-ish readable name for this rule, must not change.
+    :param description: a short, human-readable text, explaining why the given rules are grouped together.
+    :param rules: the initial set of rules.
     """
-    def __init__(self, slug: str, description: str, matchers: Iterable[Matcher]) -> None:
+    def __init__(self, slug: str, description: str, rules: Iterable[Rule]) -> None:
         self._slug = slug
         self._description = description
-        self._matchers = {}  # type: Dict[str, Matcher]
-        self.extend(matchers)
+        self._rules = {}  # type: Dict[str, Rule]
+        self.extend(rules)
 
-    def append(self, matcher: Matcher, replace: bool = False) -> None:
+    def append(self, rule: Rule, replace: bool = False) -> None:
         """
-        :param matcher: matcher to add; it must not yet exist in the group.
-        :param replace: if matcher duplicates an existing one, overwrite it.
+        :param rule: rule to add; it must not yet exist in the group.
+        :param replace: if rule duplicates an existing one, overwrite it.
         """
-        if not isinstance(matcher, Matcher):
-            raise Exception('Matchers must be derived from libestg3b.Matcher')
-        if matcher._slug in self._matchers and not replace:
-            raise Exception(f'Slug {matcher._slug} is already in this group')
+        if not isinstance(rule, Rule):
+            raise Exception('Rules must be derived from libestg3b.Rule')
+        if rule._slug in self._rules and not replace:
+            raise Exception(f'Slug {rule._slug} is already in this group')
 
-        if self._matchers:
-            my_type = next(iter(self._matchers.values()))._bonus[0]
-            if my_type != matcher._bonus[0]:
-                raise Exception(f'cannot add a {matcher._bonus[0]} matcher to a group containing {my_type} matchers.')
+        if self._rules:
+            my_type = next(iter(self._rules.values()))._bonus[0]
+            if my_type != rule._bonus[0]:
+                raise Exception(f'cannot add a {rule._bonus[0]} rule to a group containing {my_type} rules.')
 
-        self._matchers[matcher._slug] = matcher
+        self._rules[rule._slug] = rule
 
-    def match(self, minute: datetime.datetime, start: datetime.datetime, holidays: holidays.HolidayBase) -> Optional[Matcher]:
+    def match(self, minute: datetime.datetime, start: datetime.datetime, holidays: holidays.HolidayBase) -> Optional[Rule]:
         """
         Evaluate this group. The given shift is tested using each of the stored
-        matchers. The matcher with the highest bonus is the returned. If not a
+        rules. The rule with the highest bonus is the returned. If not a
         single one matches, ``None`` is returned.
 
         This method is normally used by :class:`libestg3b.EStG3b`, but you can
@@ -245,25 +245,25 @@ class MatcherGroup():
         :param start: the first minute in this shift  (see :class:`libestgb3.EStG3b`)
         """
         try:
-            return max(filter(lambda matcher: matcher.match(minute, start, holidays), self))
+            return max(filter(lambda rule: rule.match(minute, start, holidays), self))
         except ValueError:  # no match found
             return None
 
-    def extend(self, matchers: Iterable[Matcher], replace: bool = False) -> None:
+    def extend(self, rules: Iterable[Rule], replace: bool = False) -> None:
         """
-        Add the given matchers to this group.
+        Add the given rules to this group.
 
-        :param matchers:
-        :param replace: if one of the given matcher duplicates an existing one, overwrite it instead of raising an exception.
+        :param rules:
+        :param replace: if one of the given rule duplicates an existing one, overwrite it instead of raising an exception.
         """
-        for m in matchers:
+        for m in rules:
             self.append(m, replace)
 
     def __contains__(self, item) -> bool:
-        if isinstance(item, Matcher):
-            return item._slug in self._matchers
+        if isinstance(item, Rule):
+            return item._slug in self._rules
         else:
-            return item in self._matchers
+            return item in self._rules
 
-    def __iter__(self) -> Iterator[Matcher]:
-        return self._matchers.values().__iter__()
+    def __iter__(self) -> Iterator[Rule]:
+        return self._rules.values().__iter__()

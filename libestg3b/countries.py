@@ -1,9 +1,9 @@
 from decimal import Decimal
 
 from libestg3b.estg3b import EStG3bBase
-from libestg3b.matcher import DayMatcher, DayTimeMatcher, Matcher, MatcherGroup
+from libestg3b.rule import DayRule, DayTimeRule, Rule, RuleGroup
 
-M = Matcher
+R = Rule
 
 
 class EStG3bGermany(EStG3bBase):
@@ -13,9 +13,9 @@ class EStG3bGermany(EStG3bBase):
     ]
 
     def __init__(self, **kwargs):
-        matchers = (
-            MatcherGroup('GRP_DE_NIGHT', 'Nachtarbeit', (
-                M(
+        rules = (
+            RuleGroup('GRP_DE_NIGHT', 'Nachtarbeit', (
+                R(
                     'DE_NIGHT', 'Nachtarbeit 20:00-06:00',
                     lambda m: m.hour >= 20 or m.hour < 6, multiply=Decimal('0.25'),
                     tests=(
@@ -26,7 +26,7 @@ class EStG3bGermany(EStG3bBase):
                         ('~06:00', False),
                     ),
                 ),
-                M(
+                R(
                     'DE_NIGHT_START_YESTERDAY', 'Nachtarbeit 00:00-04:00 (Folgetag)',
                     lambda m, s: 0 <= m.hour < 4 and s.date() < m.date(), multiply=Decimal('0.4'),
                     tests=(
@@ -37,8 +37,8 @@ class EStG3bGermany(EStG3bBase):
                     )
                 ),
             )),
-            MatcherGroup('GRP_HOLIDAYS', 'Sonntags und Feiertagsarbeit', (
-                M(
+            RuleGroup('GRP_HOLIDAYS', 'Sonntags und Feiertagsarbeit', (
+                R(
                     'DE_SUNDAY', 'Sonntagsarbeit',
                     lambda m: m.weekday() == 6, multiply=Decimal('0.5'),
                     tests=(
@@ -48,7 +48,7 @@ class EStG3bGermany(EStG3bBase):
                         ('2018-09-16 23:59~2018-09-17 00:00', False),
                     ),
                 ),
-                M(
+                R(
                     'DE_SUNDAY_NEXT_NIGHT', 'Sonntagsarbeit (Montag)',
                     lambda m, s: s.weekday() == 6 and 0 <= m.hour < 4, multiply=Decimal('0.5'),
                     tests=(
@@ -61,7 +61,7 @@ class EStG3bGermany(EStG3bBase):
                         ('2018-09-17 23:59~2018-09-18 00:00', False),
                     ),
                 ),
-                M(
+                R(
                     'DE_HOLIDAY', 'Feiertagsarbeit',
                     lambda m, s, holidays: m in holidays, multiply=Decimal('1.25'),
                     tests=(
@@ -73,7 +73,7 @@ class EStG3bGermany(EStG3bBase):
                         ('2018-05-10 23:59~2018-05-11 00:00', False),
                     ),
                 ),
-                M(
+                R(
                     'DE_HOLIDAY_NEXT_NIGHT', 'Feiertagsarbeit (Folgetag)',
                     lambda m, s, holidays: s in holidays and 0 <= m.hour < 4, multiply=Decimal('1.25'),
                     tests=(
@@ -86,11 +86,11 @@ class EStG3bGermany(EStG3bBase):
                         ('2018-09-11 23:59~2018-05-12 00:00', False),
                     )
                 ),
-                DayTimeMatcher('DE_HEILIGABEND', 12, 24, 14, multiply=Decimal('1.25')),
-                DayTimeMatcher('DE_SILVESTER', 12, 31, 14, multiply=Decimal('1.25')),
-                DayMatcher('DE_WEIHNACHTSFEIERTAG_1', 12, 25, multiply=Decimal('1.5')),
-                DayMatcher('DE_WEIHNACHTSFEIERTAG_2', 12, 26, multiply=Decimal('1.5')),
-                DayMatcher('DE_TAGDERARBEIT', 5, 1, multiply=Decimal('1.5')),
+                DayTimeRule('DE_HEILIGABEND', 12, 24, 14, multiply=Decimal('1.25')),
+                DayTimeRule('DE_SILVESTER', 12, 31, 14, multiply=Decimal('1.25')),
+                DayRule('DE_WEIHNACHTSFEIERTAG_1', 12, 25, multiply=Decimal('1.5')),
+                DayRule('DE_WEIHNACHTSFEIERTAG_2', 12, 26, multiply=Decimal('1.5')),
+                DayRule('DE_TAGDERARBEIT', 5, 1, multiply=Decimal('1.5')),
             )),
         )
-        super().__init__('DE', matchers, **kwargs)
+        super().__init__('DE', rules, **kwargs)

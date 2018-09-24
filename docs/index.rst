@@ -25,5 +25,5 @@ Welcome to libestg3b's documentation!
    :caption: Packages:
 
    libestg3b
-   libestg3b.matcher
+   libestg3b.rule
    libestg3b.countries

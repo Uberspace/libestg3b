@@ -6,29 +6,29 @@ from typing import Iterator, List, Set, Tuple
 
 import holidays
 
-from .matcher import MatcherGroup
+from .rule import RuleGroup
 
-from .matcher import Matcher  # isort:skip
+from .rule import Rule  # isort:skip
 
 
 class EStG3bBase:
-    def __init__(self, country, groups, add_matchers=None, replace_matchers=None) -> None:
+    def __init__(self, country, groups, add_rules=None, replace_rules=None) -> None:
         self._holidays = holidays.CountryHoliday(country.upper())
         self._groups = list(groups)
 
-        if replace_matchers:
-            self._groups = replace_matchers.copy()
+        if replace_rules:
+            self._groups = replace_rules.copy()
 
-        if add_matchers:
+        if add_rules:
             old_grps = dict((g._slug, g) for g in self._groups)
-            for new_grp in add_matchers:
+            for new_grp in add_rules:
                 if new_grp._slug in old_grps:
                     old_grps[new_grp._slug].extend(new_grp, replace=True)
                 else:
                     self._groups.append(new_grp)
 
         assert self._groups
-        assert all(lambda g: isinstance(g, MatcherGroup) for g in self._groups)
+        assert all(lambda g: isinstance(g, RuleGroup) for g in self._groups)
 
     def _list_minutes(self, start: datetime.datetime, end: datetime.datetime) -> Iterator[datetime.datetime]:
         assert start < end
@@ -42,7 +42,7 @@ class EStG3bBase:
 
     def calculate_shift(self, shift: Tuple[datetime.datetime, datetime.datetime]) -> List["Match"]:
         """
-        Turn a shift into a number of matches, containing the relevant Matchers (if any),
+        Turn a shift into a number of matches, containing the relevant rules (if any),
         which can be used to calculate the appropriate high of bonus payments.
 
         >>> import datetime as DT
@@ -50,18 +50,18 @@ class EStG3bBase:
         >>> e = EStG3b("DE")
         >>> e.calculate_shift([DT.datetime(2018, 12, 24, 13), DT.datetime(2018, 12, 25, 2)])
         [
-            Match(start=datetime.datetime(2018, 12, 24, 13, 0), end=datetime.datetime(2018, 12, 24, 14, 0), matchers=set(
+            Match(start=datetime.datetime(2018, 12, 24, 13, 0), end=datetime.datetime(2018, 12, 24, 14, 0), rules=set(
             )),
-            Match(start=datetime.datetime(2018, 12, 24, 14, 0), end=datetime.datetime(2018, 12, 24, 20, 0), matchers={
-                <Matcher: DE_HEILIGABEND YYYY-12-24 14:00+>
+            Match(start=datetime.datetime(2018, 12, 24, 14, 0), end=datetime.datetime(2018, 12, 24, 20, 0), rules={
+                <Rule: DE_HEILIGABEND YYYY-12-24 14:00+>
             }),
-            Match(start=datetime.datetime(2018, 12, 24, 20, 0), end=datetime.datetime(2018, 12, 25, 0, 0), matchers={
-                <Matcher: DE_HEILIGABEND YYYY-12-24 14:00+>,
-                <Matcher: DE_NIGHT Nachtarbeit 20:00-06:00>
+            Match(start=datetime.datetime(2018, 12, 24, 20, 0), end=datetime.datetime(2018, 12, 25, 0, 0), rules={
+                <Rule: DE_HEILIGABEND YYYY-12-24 14:00+>,
+                <Rule: DE_NIGHT Nachtarbeit 20:00-06:00>
             }),
-            Match(start=datetime.datetime(2018, 12, 25, 0, 0), end=datetime.datetime(2018, 12, 25, 2, 0), matchers={
-                <Matcher: DE_WEIHNACHTSFEIERTAG_1 YYYY-12-25>,
-                <Matcher: DE_NIGHT_START_YESTERDAY Nachtarbeit 00:00-04:00 (Folgetag)>
+            Match(start=datetime.datetime(2018, 12, 25, 0, 0), end=datetime.datetime(2018, 12, 25, 2, 0), rules={
+                <Rule: DE_WEIHNACHTSFEIERTAG_1 YYYY-12-25>,
+                <Rule: DE_NIGHT_START_YESTERDAY Nachtarbeit 00:00-04:00 (Folgetag)>
             })
         ]
 
@@ -78,18 +78,18 @@ class EStG3bBase:
         matches = []  # type: List[Match]
 
         for minute in minutes:
-            minute_matchers = set(
+            minute_rules = set(
                 group.match(minute, start, self._holidays)
                 for group in self._groups
             )
-            minute_matchers.discard(None)
+            minute_rules.discard(None)
 
-            if matches and matches[-1].matchers == minute_matchers:
+            if matches and matches[-1].rules == minute_rules:
                 # combine equal matches by increasing the length of the last one
                 matches[-1].end = matches[-1].end + datetime.timedelta(minutes=1)
             else:
                 # a list of minutes is inclusive the last one, the `end` stamp is exclusive
-                matches.append(Match(minute, minute + datetime.timedelta(minutes=1), minute_matchers))
+                matches.append(Match(minute, minute + datetime.timedelta(minutes=1), minute_rules))
 
         return matches
 
@@ -110,20 +110,20 @@ class Match():
 
     :param start: the (inclusive) time this shift part starts at
     :param end: the (exclusive) time this shift part ends at
-    :param matchers: all the relevant Matcher instances. May be empty to indicate, that no match has been found.
+    :param rules: all the relevant Rule instances. May be empty to indicate, that no match has been found.
     """
     start: datetime.datetime
     end: datetime.datetime
-    matchers: Set[Matcher]
+    rules: Set[Rule]
 
     def __repr__(self):
-        matchers = '+'.join(m._slug for m in self.matchers)
-        if not matchers:
-            matchers = 'None'
-        return f'<Match {self.start.isoformat()}~{self.end.isoformat()}, {matchers}, add={self.bonus_add}, multiply={self.bonus_multiply}>'
+        rules = '+'.join(m._slug for m in self.rules)
+        if not rules:
+            rules = 'None'
+        return f'<Match {self.start.isoformat()}~{self.end.isoformat()}, {rules}, add={self.bonus_add}, multiply={self.bonus_multiply}>'
 
     def _sum_bonus(self, t):
-        return sum(m._bonus[1] for m in self.matchers if m._bonus[0] == t)
+        return sum(m._bonus[1] for m in self.rules if m._bonus[0] == t)
 
     @property
     def bonus_multiply(self) -> Decimal:

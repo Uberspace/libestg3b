@@ -51,17 +51,17 @@ Usage
         Match(
             start=datetime.datetime(2018, 9, 16, 19, 0),
             end=datetime.datetime(2018, 9, 16, 20, 0),
-            matchers={<Matcher: Sonntagsarbeit>}
+            rules={<Rule: Sonntagsarbeit>}
         ),
         Match(
             start=datetime.datetime(2018, 9, 16, 20, 0),
             end=datetime.datetime(2018, 9, 17, 0, 0),
-            matchers={<Matcher: Sonntagsarbeit>, <Matcher: Nachtarbeit 20:00-06:00>}
+            rules={<Rule: Sonntagsarbeit>, <Rule: Nachtarbeit 20:00-06:00>}
         ),
         Match(
             start=datetime.datetime(2018, 9, 17, 0, 0),
             end=datetime.datetime(2018, 9, 17, 2, 0),
-            matchers={<Matcher: Sonntagsarbeit (Montag)>, <Matcher: Nachtarbeit 00:00-04:00 (Folgetag)>}
+            rules={<Rule: Sonntagsarbeit (Montag)>, <Rule: Nachtarbeit 00:00-04:00 (Folgetag)>}
         ),
     ]
 

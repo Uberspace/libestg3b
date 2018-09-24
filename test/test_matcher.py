@@ -3,16 +3,16 @@ from decimal import Decimal
 
 import pytest
 
-from libestg3b.matcher import DayMatcher, DayTimeMatcher, Matcher, MatcherGroup
+from libestg3b.rule import DayRule, DayTimeRule, Rule, RuleGroup
 
 
 @pytest.fixture
-def make_matcher_group():
+def make_rule_group():
     def m(**kwargs):
-        return MatcherGroup(**{
-            "slug": "SM_GRP",
-            "description": "Some Matcher Group",
-            "matchers": [],
+        return RuleGroup(**{
+            "slug": "SR_GRP",
+            "description": "Some Rule Group",
+            "rules": [],
             **kwargs,
         })
 
@@ -20,70 +20,70 @@ def make_matcher_group():
 
 
 @pytest.fixture
-def matcher_group(make_matcher_group):
-    return make_matcher_group()
+def rule_group(make_rule_group):
+    return make_rule_group()
 
 
-def test_matcher_init():
-    m = Matcher('A', 'a', lambda x: False, add=Decimal('1'))
+def test_rule_init():
+    m = Rule('A', 'a', lambda x: False, add=Decimal('1'))
     m.match(None, None, None)
 
 
-def test_matcher_init_decimal_multiply():
+def test_rule_init_decimal_multiply():
     with pytest.raises(AssertionError):
-        Matcher('A', 'a', lambda x: False, multiply=0.1)
+        Rule('A', 'a', lambda x: False, multiply=0.1)
 
 
-def test_matcher_init_decimal_add():
+def test_rule_init_decimal_add():
     with pytest.raises(AssertionError):
-        Matcher('A', 'a', lambda x: False, add=0.1)
+        Rule('A', 'a', lambda x: False, add=0.1)
 
 
-def test_matcher_init__no_add_or_multiply():
+def test_rule_init__no_add_or_multiply():
     with pytest.raises(AssertionError):
-        Matcher('A', 'a', lambda x: False)
+        Rule('A', 'a', lambda x: False)
 
 
-def test_matcher_init_add_and_multiply():
+def test_rule_init_add_and_multiply():
     with pytest.raises(AssertionError):
-        Matcher('A', 'a', lambda x: False, add=Decimal('1'), multiply=Decimal('2'))
+        Rule('A', 'a', lambda x: False, add=Decimal('1'), multiply=Decimal('2'))
 
 
-def test_matcher_init_no_slug():
+def test_rule_init_no_slug():
     with pytest.raises(AssertionError):
-        Matcher('', 'xx', lambda x: False)
+        Rule('', 'xx', lambda x: False)
 
 
-def test_matcher_init_no_description():
+def test_rule_init_no_description():
     with pytest.raises(AssertionError):
-        Matcher('X', '', lambda x: False)
+        Rule('X', '', lambda x: False)
 
 
 @pytest.mark.parametrize("impl", [
     lambda: False,
     lambda a, b, c, d: False,
 ])
-def test_matcher_init_impl_nargs_crash(impl):
+def test_rule_init_impl_nargs_crash(impl):
     with pytest.raises(AssertionError):
-        Matcher('A', 'a', impl)
+        Rule('A', 'a', impl)
 
 
 @pytest.mark.parametrize("impl", [
     lambda a: False,
     lambda a: True,
 ])
-def test_matcher_call_rtn_type(impl):
-    m = Matcher('A', 'a', impl, add=Decimal('1'))
+def test_rule_call_rtn_type(impl):
+    m = Rule('A', 'a', impl, add=Decimal('1'))
     m.match(None, None, None)
 
 
-def test_matcher_call_rtn_type_crash():
-    m = Matcher('A', 'a', lambda x: None, add=Decimal('1'))
+def test_rule_call_rtn_type_crash():
+    m = Rule('A', 'a', lambda x: None, add=Decimal('1'))
     with pytest.raises(AssertionError):
         m.match(None, None, None)
 
 
-def test_matcher_call_passing_1():
+def test_rule_call_passing_1():
     args = None
 
     def impl(a):
@@ -91,12 +91,12 @@ def test_matcher_call_passing_1():
         args = [a]
         return True
 
-    m = Matcher('A', 'a', impl, add=Decimal('1'))
+    m = Rule('A', 'a', impl, add=Decimal('1'))
     m.match(0, 1, 2)
     assert args == [0]
 
 
-def test_matcher_call_passing_2():
+def test_rule_call_passing_2():
     args = None
 
     def impl(a, b):
@@ -104,12 +104,12 @@ def test_matcher_call_passing_2():
         args = [a, b]
         return True
 
-    m = Matcher('A', 'a', impl, add=Decimal('1'))
+    m = Rule('A', 'a', impl, add=Decimal('1'))
     m.match(0, 1, 2)
     assert args == [0, 1]
 
 
-def test_matcher_call_passing_3():
+def test_rule_call_passing_3():
     args = None
 
     def impl(a, b, c):
@@ -117,26 +117,26 @@ def test_matcher_call_passing_3():
         args = [a, b, c]
         return True
 
-    m = Matcher('A', 'a', impl, add=Decimal('1'))
+    m = Rule('A', 'a', impl, add=Decimal('1'))
     m.match(0, 1, 2)
     assert args == [0, 1, 2]
 
 
 def test_macher_eq():
-    m1 = Matcher('A', 'a', lambda f: True, add=Decimal('1'))
-    m2 = Matcher('A', 'a', lambda f: True, add=Decimal('2'))
+    m1 = Rule('A', 'a', lambda f: True, add=Decimal('1'))
+    m2 = Rule('A', 'a', lambda f: True, add=Decimal('2'))
     assert m1 == m2
 
 
 def test_macher_str():
-    m = Matcher('SLUG', 'description', lambda f: True, add=Decimal('1'))
+    m = Rule('SLUG', 'description', lambda f: True, add=Decimal('1'))
     assert 'SLUG' in str(m)
     assert 'description' in str(m)
 
 
 def test_macher_ltgt_add():
-    m1 = Matcher('A', 'a', lambda f: True, add=Decimal('1'))
-    m2 = Matcher('A', 'a', lambda f: True, add=Decimal('2'))
+    m1 = Rule('A', 'a', lambda f: True, add=Decimal('1'))
+    m2 = Rule('A', 'a', lambda f: True, add=Decimal('2'))
     assert m1 < m2
     assert not(m2 < m1)
     assert m2 > m1
@@ -144,8 +144,8 @@ def test_macher_ltgt_add():
 
 
 def test_macher_ltgt_multiply():
-    m1 = Matcher('A', 'a', lambda f: True, multiply=Decimal('1'))
-    m2 = Matcher('A', 'a', lambda f: True, multiply=Decimal('2'))
+    m1 = Rule('A', 'a', lambda f: True, multiply=Decimal('1'))
+    m2 = Rule('A', 'a', lambda f: True, multiply=Decimal('2'))
     assert m1 < m2
     assert not(m2 < m1)
     assert m2 > m1
@@ -153,8 +153,8 @@ def test_macher_ltgt_multiply():
 
 
 def test_macher_ltgt_incompatible():
-    m1 = Matcher('A', 'a', lambda f: True, add=Decimal('1'))
-    m2 = Matcher('A', 'a', lambda f: True, multiply=Decimal('2'))
+    m1 = Rule('A', 'a', lambda f: True, add=Decimal('1'))
+    m2 = Rule('A', 'a', lambda f: True, multiply=Decimal('2'))
 
     with pytest.raises(Exception):
         m1 < m2
@@ -169,8 +169,8 @@ def test_macher_ltgt_incompatible():
     (datetime.datetime(2018, 12, 27, 0), False),
     (datetime.datetime(2019, 12, 26, 0), True),
 ])
-def test_daymatcher(dt, res):
-    m = DayMatcher('XXX', 12, 26, multiply=Decimal('1.25'))
+def test_DayRule(dt, res):
+    m = DayRule('XXX', 12, 26, multiply=Decimal('1.25'))
     assert m.match(dt, dt, None) == res
 
 
@@ -182,100 +182,100 @@ def test_daymatcher(dt, res):
     (datetime.datetime(2018, 12, 25, 14), False),
     (datetime.datetime(2018, 12, 24, 23, 59), True),
 ])
-def test_daytimematcher(dt, res):
-    m = DayTimeMatcher('XXX', 12, 24, 14, multiply=Decimal('1.25'))
+def test_daytimeRule(dt, res):
+    m = DayTimeRule('XXX', 12, 24, 14, multiply=Decimal('1.25'))
     assert m.match(dt, dt, None) == res
 
 
-def test_matchergroup():
-    MatcherGroup('XXX', 'xxx', [])
+def test_rulegroup():
+    RuleGroup('XXX', 'xxx', [])
 
 
-def test_matchergroup_init():
-    mg = MatcherGroup('XXX', 'xxx', [DayMatcher('mmm', 1, 1, multiply=Decimal('2'))])
+def test_rulegroup_init():
+    mg = RuleGroup('XXX', 'xxx', [DayRule('mmm', 1, 1, multiply=Decimal('2'))])
     assert mg._description == 'xxx'
-    assert len(mg._matchers) == 1
-    assert mg._matchers['mmm']._slug == 'mmm'
+    assert len(mg._rules) == 1
+    assert mg._rules['mmm']._slug == 'mmm'
 
 
-def test_matchergroup_duplicate():
+def test_rulegroup_duplicate():
     with pytest.raises(Exception):
-        MatcherGroup('XXX', 'xxx', [
-            DayMatcher('mmm', 1, 1, multiply=Decimal('2')),
-            DayMatcher('mmm', 1, 1, multiply=Decimal('2')),
+        RuleGroup('XXX', 'xxx', [
+            DayRule('mmm', 1, 1, multiply=Decimal('2')),
+            DayRule('mmm', 1, 1, multiply=Decimal('2')),
         ])
 
 
-def test_matchergroup_append(matcher_group):
-    matcher_group.append(DayMatcher('mmm', 1, 1, multiply=Decimal('2')))
-    assert len(matcher_group._matchers) == 1
-    assert matcher_group._matchers['mmm']._slug == 'mmm'
+def test_rulegroup_append(rule_group):
+    rule_group.append(DayRule('mmm', 1, 1, multiply=Decimal('2')))
+    assert len(rule_group._rules) == 1
+    assert rule_group._rules['mmm']._slug == 'mmm'
 
 
-def test_matchergroup_append_duplicate(matcher_group):
-    matcher_group.append(DayMatcher('mmm', 1, 1, multiply=Decimal('2')))
+def test_rulegroup_append_duplicate(rule_group):
+    rule_group.append(DayRule('mmm', 1, 1, multiply=Decimal('2')))
     with pytest.raises(Exception):
-        matcher_group.append(DayMatcher('mmm', 1, 1, multiply=Decimal('2')))
-    assert len(matcher_group._matchers) == 1
-    assert matcher_group._matchers['mmm']._slug == 'mmm'
+        rule_group.append(DayRule('mmm', 1, 1, multiply=Decimal('2')))
+    assert len(rule_group._rules) == 1
+    assert rule_group._rules['mmm']._slug == 'mmm'
 
 
-def test_matchergroup_append_replace(matcher_group):
-    matcher_group.append(DayMatcher('mmm', 1, 1, multiply=Decimal('2')))
-    matcher_group.append(DayMatcher('mmm', 1, 1, multiply=Decimal('3')), replace=True)
-    assert len(matcher_group._matchers) == 1
-    assert matcher_group._matchers['mmm']._slug == 'mmm'
-    assert matcher_group._matchers['mmm']._multiply == Decimal("3")
+def test_rulegroup_append_replace(rule_group):
+    rule_group.append(DayRule('mmm', 1, 1, multiply=Decimal('2')))
+    rule_group.append(DayRule('mmm', 1, 1, multiply=Decimal('3')), replace=True)
+    assert len(rule_group._rules) == 1
+    assert rule_group._rules['mmm']._slug == 'mmm'
+    assert rule_group._rules['mmm']._multiply == Decimal("3")
 
 
-def test_matchergroup_append_non_matcher(matcher_group):
+def test_rulegroup_append_non_Rule(rule_group):
     with pytest.raises(Exception):
-        matcher_group.append("bla")
+        rule_group.append("bla")
 
 
-def test_matchergroup_append_wrong_type(matcher_group):
-    matcher_group.append(DayMatcher('mmm1', 1, 1, multiply=Decimal('2')))
+def test_rulegroup_append_wrong_type(rule_group):
+    rule_group.append(DayRule('mmm1', 1, 1, multiply=Decimal('2')))
     with pytest.raises(Exception):
-        matcher_group.append(DayMatcher('mmm2', 2, 2, add=Decimal('2')))
+        rule_group.append(DayRule('mmm2', 2, 2, add=Decimal('2')))
 
 
-def test_matchergroup_extend(matcher_group):
-    matcher_group.extend([
-        DayMatcher('mmm1', 1, 1, multiply=Decimal('2')),
-        DayMatcher('mmm2', 1, 2, multiply=Decimal('2')),
-        DayMatcher('mmm3', 1, 3, multiply=Decimal('2')),
+def test_rulegroup_extend(rule_group):
+    rule_group.extend([
+        DayRule('mmm1', 1, 1, multiply=Decimal('2')),
+        DayRule('mmm2', 1, 2, multiply=Decimal('2')),
+        DayRule('mmm3', 1, 3, multiply=Decimal('2')),
     ])
-    assert len(matcher_group._matchers) == 3
-    assert matcher_group._matchers['mmm1']._slug == 'mmm1'
-    assert matcher_group._matchers['mmm2']._slug == 'mmm2'
-    assert matcher_group._matchers['mmm3']._slug == 'mmm3'
+    assert len(rule_group._rules) == 3
+    assert rule_group._rules['mmm1']._slug == 'mmm1'
+    assert rule_group._rules['mmm2']._slug == 'mmm2'
+    assert rule_group._rules['mmm3']._slug == 'mmm3'
 
 
-def test_matchergroup_extend_duplicate(matcher_group):
-    matcher_group.append(DayMatcher('mmm', 1, 1, multiply=Decimal('2')))
+def test_rulegroup_extend_duplicate(rule_group):
+    rule_group.append(DayRule('mmm', 1, 1, multiply=Decimal('2')))
     with pytest.raises(Exception):
-        matcher_group.extend([DayMatcher('mmm', 1, 1, multiply=Decimal('3'))])
-    assert len(matcher_group._matchers) == 1
-    assert matcher_group._matchers['mmm']._multiply == Decimal("2")
+        rule_group.extend([DayRule('mmm', 1, 1, multiply=Decimal('3'))])
+    assert len(rule_group._rules) == 1
+    assert rule_group._rules['mmm']._multiply == Decimal("2")
 
 
-def test_matchergroup_extend_replace(matcher_group):
-    matcher_group.append(DayMatcher('mmm', 1, 1, multiply=Decimal('2')))
-    matcher_group.extend([DayMatcher('mmm', 1, 1, multiply=Decimal('3'))], replace=True)
-    assert len(matcher_group._matchers) == 1
-    assert matcher_group._matchers['mmm']._multiply == Decimal("3")
+def test_rulegroup_extend_replace(rule_group):
+    rule_group.append(DayRule('mmm', 1, 1, multiply=Decimal('2')))
+    rule_group.extend([DayRule('mmm', 1, 1, multiply=Decimal('3'))], replace=True)
+    assert len(rule_group._rules) == 1
+    assert rule_group._rules['mmm']._multiply == Decimal("3")
 
 
-def test_matchergroup_contains(make_matcher_group):
-    mg = make_matcher_group(matchers=[DayMatcher('mmm', 1, 1, multiply=Decimal('2'))])
+def test_rulegroup_contains(make_rule_group):
+    mg = make_rule_group(rules=[DayRule('mmm', 1, 1, multiply=Decimal('2'))])
     assert 'mmm' in mg
-    assert DayMatcher('mmm', 1, 1, multiply=Decimal('2')) in mg
+    assert DayRule('mmm', 1, 1, multiply=Decimal('2')) in mg
 
 
-def test_matchergroup_iter(make_matcher_group):
-    mg = make_matcher_group(matchers=[
-        DayMatcher('mmm1', 1, 1, multiply=Decimal('2')),
-        DayMatcher('mmm2', 2, 2, multiply=Decimal('2')),
+def test_rulegroup_iter(make_rule_group):
+    mg = make_rule_group(rules=[
+        DayRule('mmm1', 1, 1, multiply=Decimal('2')),
+        DayRule('mmm2', 2, 2, multiply=Decimal('2')),
     ])
 
     i = iter(mg)
