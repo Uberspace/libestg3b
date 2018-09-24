@@ -10,8 +10,8 @@ import holidays
 
 class Rule():
     """
-    Given a work shift, calculate if a defined bonus rule (e.g. "24th of december
-    pays 50% more") is to be applied / matches.
+    Defines a situation in which an employee might receive extra pay, e.g.
+    "on 24th of december, pay 50% more".
 
     :param slug: a machine and human-ish readable name for this rule (see below).
     :param description: a human readable short-form description
