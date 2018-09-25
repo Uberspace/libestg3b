@@ -117,13 +117,18 @@ class Match():
     rules: Set[Rule]
 
     def __repr__(self):
-        rules = '+'.join(m._slug for m in self.rules)
-        if not rules:
-            rules = 'None'
-        return f'<Match {self.start.isoformat()}~{self.end.isoformat()}, {rules}, add={self.bonus_add}, multiply={self.bonus_multiply}>'
+        return f'<Match {self.start.isoformat()}~{self.end.isoformat()}, {self.rules_str}, add={self.bonus_add}, multiply={self.bonus_multiply}>'
 
     def _sum_bonus(self, t):
         return sum(m._bonus[1] for m in self.rules if m._bonus[0] == t)
+
+    @property
+    def rules_str(self) -> str:
+        """ a human-readable representation of all the rules matched, e.g. ``DE_NIGHT+DE_SUNDAY`` """
+        if self.rules:
+            return '+'.join(m._slug for m in self.rules)
+        else:
+            return 'None'
 
     @property
     def bonus_multiply(self) -> Decimal:
