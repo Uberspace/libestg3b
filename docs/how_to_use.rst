@@ -105,7 +105,7 @@ our example is based on German law, which only works with percentages, we can
 simplify our code.
 
 To determine the amount of money to be payed out, have a look at the ``bonus_*``
-and ``hours`` attributes. The first one tells us how much to increase the base
+and ``minutes`` attributes. The first one tells us how much to increase the base
 salary, the 2nd one tells us how much time was actually relevant.
 
 .. code-block:: python
@@ -115,30 +115,30 @@ salary, the 2nd one tells us how much time was actually relevant.
     def main():
         shifts = parse_work()
         shifts = libestg3b.EStG3b('DE')().calculate_shifts(shifts)
-        base_salary = Decimal(25)
+        base_salary = Decimal(25) / 60
         total = Decimal(0)
 
         for shift in shifts:
             for match in shift:
                 bonus = match.bonus_multiply + 1
-                eur = base_salary * match.hours * bonus
+                eur = base_salary * match.minutes * bonus
                 total = total + eur
 
                 print(match)
-                print(f'({base_salary}€ * {bonus:.2f}) * {match.hours}h = {eur: 2.2f}€')
+                print(f'({base_salary}€ * {bonus:.2f}) * {match.minutes}m = {eur: 2.2f}€')
 
         print(f'\nTotal: {total:.2f}€')
 
 ... and when we run it::
 
     <Match 2018-09-22T18:00:00~2018-09-22T20:00:00, None, add=0, multiply=0>
-    (25€ * 1.00) * 2h =  50.00€
+    (25€ * 1.00) * 120m =  50.00€
     <Match 2018-09-23T02:00:00~2018-09-23T03:00:00, DE_NIGHT+DE_SUNDAY, add=0, multiply=0.75>
-    (25€ * 1.75) * 1h =  43.75€
+    (25€ * 1.75) * 60m =  43.75€
     <Match 2018-09-24T22:00:00~2018-09-25T00:00:00, DE_NIGHT, add=0, multiply=0.25>
-    (25€ * 1.25) * 2h =  62.50€
+    (25€ * 1.25) * 120m =  62.50€
     <Match 2018-09-25T00:00:00~2018-09-25T01:00:00, DE_NIGHT_START_YESTERDAY, add=0, multiply=0.4>
-    (25€ * 1.40) * 1h =  35.00€
+    (25€ * 1.40) * 60m =  35.00€
 
     Total: 191.25€
 

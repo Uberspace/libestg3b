@@ -29,13 +29,13 @@ def match():
 
 
 def test_match(match):
-    assert match.hours == Decimal('2.5')
+    assert match.minutes == Decimal('150')
     assert match.bonus_multiply == Decimal('0.75')
     assert match.bonus_add == Decimal(8)
 
 
 def test_match_no_rules():
     match = Match(DT.datetime(2018, 1, 1, 0), DT.datetime(2018, 1, 1, 2, 30), [])
-    assert match.hours == Decimal(2.5)
+    assert match.minutes == Decimal('150')
     assert match.bonus_multiply == Decimal(0)
     assert match.bonus_add == Decimal(0)

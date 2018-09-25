@@ -141,6 +141,6 @@ class Match():
         return self._sum_bonus('add')
 
     @property
-    def hours(self) -> Decimal:
-        """ the number of hours this Match covers, e.g. ``Decimal(1.5)`` """
-        return Decimal((self.end - self.start).seconds) / 60 / 60
+    def minutes(self) -> Decimal:
+        """ the number of minutes this Match covers, e.g. ``Decimal(180)`` => 3h. """
+        return Decimal((self.end - self.start).seconds) / 60
