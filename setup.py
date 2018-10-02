@@ -37,6 +37,7 @@ setup(
             'pytest==3.8.*',
             'pytest-cov',
             'tox',
+            'codecov',
             # releasing
             'twine',
             # documenting

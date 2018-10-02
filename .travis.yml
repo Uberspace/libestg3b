@@ -10,3 +10,4 @@ install:
 script:
   - make lint
   - make test
+  - codecov
