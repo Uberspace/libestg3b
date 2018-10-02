@@ -93,16 +93,29 @@ def test_estg3bbase_calculate_shifts():
         [DT.datetime(2018, 2, 1, 2), DT.datetime(2018, 2, 1, 6)],
         [DT.datetime(2018, 2, 3, 2), DT.datetime(2018, 2, 3, 7)],
     ])
-    matches = list(matches)
 
-    assert len(matches) == 2
+    assert len(matches) == 3
 
-    assert len(matches[0]) == 1
-    assert matches[0][0] == Match(DT.datetime(2018, 2, 1, 2), DT.datetime(2018, 2, 1, 6), _rules(e, 'DE_NIGHT'))
+    assert matches[0] == Match(DT.datetime(2018, 2, 1, 2), DT.datetime(2018, 2, 1, 6), _rules(e, 'DE_NIGHT'))
+    assert matches[1] == Match(DT.datetime(2018, 2, 3, 2), DT.datetime(2018, 2, 3, 6), _rules(e, 'DE_NIGHT'))
+    assert matches[2] == Match(DT.datetime(2018, 2, 3, 6), DT.datetime(2018, 2, 3, 7), set())
 
-    assert len(matches[1]) == 2
-    assert matches[1][0] == Match(DT.datetime(2018, 2, 3, 2), DT.datetime(2018, 2, 3, 6), _rules(e, 'DE_NIGHT'))
-    assert matches[1][1] == Match(DT.datetime(2018, 2, 3, 6), DT.datetime(2018, 2, 3, 7), set())
+
+def test_estg3bbase_calculate_shifts_overlapping():
+    e = EStG3b('DE')()
+    matches = e.calculate_shifts([
+        [DT.datetime(2018, 2, 1, 2), DT.datetime(2018, 2, 1, 6)],
+        [DT.datetime(2018, 2, 3, 2), DT.datetime(2018, 2, 3, 7)],
+        [DT.datetime(2018, 2, 1, 1), DT.datetime(2018, 2, 1, 2)],
+    ])
+    # <Match 2018-02-03T02:00:00~2018-02-03T07:00:00, None, add=0, multiply=0>
+    # <Match 2018-02-03T06:00:00~2018-02-03T07:00:00, None, add=0, multiply=0>
+
+    assert len(matches) == 3
+
+    assert matches[0] == Match(DT.datetime(2018, 2, 1, 1), DT.datetime(2018, 2, 1, 6), _rules(e, 'DE_NIGHT'))
+    assert matches[1] == Match(DT.datetime(2018, 2, 3, 2), DT.datetime(2018, 2, 3, 6), _rules(e, 'DE_NIGHT'))
+    assert matches[2] == Match(DT.datetime(2018, 2, 3, 6), DT.datetime(2018, 2, 3, 7), set())
 
 
 def test_estg3bbase_add_rules():

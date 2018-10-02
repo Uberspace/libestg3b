@@ -60,13 +60,11 @@ can tell us about it:
 
     ...
 
-    shifts = libestg3b.EStG3b('DE')().calculate_shifts(shifts)
+    matches = libestg3b.EStG3b('DE')().calculate_shifts(shifts)
 
     # for each input shift, calculate_shifts returned one object ...
-    for shift in shifts:
-        # ... which is a list of rule matches
-        for match in shift:
-            print(match)
+    for match in matches:
+        print(match)
 
 When we run the script with the new code added in the last example, we get::
 
@@ -114,18 +112,17 @@ salary, the 2nd one tells us how much time was actually relevant.
 
     def main():
         shifts = parse_work()
-        shifts = libestg3b.EStG3b('DE')().calculate_shifts(shifts)
+        matches = libestg3b.EStG3b('DE')().calculate_shifts(shifts)
         base_salary = Decimal(25) / 60
         total = Decimal(0)
 
-        for shift in shifts:
-            for match in shift:
-                bonus = match.bonus_multiply + 1
-                eur = base_salary * match.minutes * bonus
-                total = total + eur
+        for match in matches:
+            bonus = match.bonus_multiply + 1
+            eur = base_salary * match.minutes * bonus
+            total = total + eur
 
-                print(match)
-                print(f'({base_salary}€ * {bonus:.2f}) * {match.minutes}m = {eur: 2.2f}€')
+            print(match)
+            print(f'({base_salary}€ * {bonus:.2f}) * {match.minutes}m = {eur: 2.2f}€')
 
         print(f'\nTotal: {total:.2f}€')
 

@@ -6,9 +6,7 @@ from typing import Iterator, List, Set, Tuple
 
 import holidays
 
-from .rule import RuleGroup
-
-from .rule import Rule  # isort:skip
+from .rule import Rule, RuleGroup
 
 
 class EStG3bBase:
@@ -93,13 +91,107 @@ class EStG3bBase:
 
         return matches
 
-    def calculate_shifts(self, shifts: List[Tuple[datetime.datetime, datetime.datetime]]) -> Iterator[List["Match"]]:
+    def calculate_shifts(self, shifts: List[Tuple[datetime.datetime, datetime.datetime]]) -> Iterator["Match"]:
         """
-        Behaves just like :meth:`calculate_shift`, but takes a list of shifts and returns a list of list of matches.
+        Behaves similar to :meth:`calculate_shift`, but takes a list of shifts
+        and returns a list of matches. It also merges any shifts that overlap,
+        resulting in a clean list of matches.
 
         :param shifts:
         """
-        return map(self.calculate_shift, shifts)
+        shifts = ((s.start, s.end) for s in Timespan.union(Timespan(*s) for s in shifts))
+        matches = itertools.chain.from_iterable(map(self.calculate_shift, shifts))
+        return list(matches)
+
+
+@dataclasses.dataclass
+class Timespan():
+    """
+    For internal usage only. Used to simplify shifts given to :meth:`EStG3b.calculate_shifts`.
+
+    >>> from libestg3b.estg3b import Timespan
+    >>> import datetime as DT
+    >>>
+    >>> t1 = Timespan(DT.datetime(2018, 10, 2, 5), DT.datetime(2018, 10, 2, 8))
+    >>> t2 = Timespan(DT.datetime(2018, 10, 2, 2), DT.datetime(2018, 10, 2, 5))
+    >>> t3 = Timespan(DT.datetime(2018, 10, 2, 7), DT.datetime(2018, 10, 2, 9))
+    >>>
+    >>> t1.overlaps(t2)
+    True
+    >>> t1.overlaps(t3)
+    True
+    >>> t2.overlaps(t3)
+    False
+    >>>
+    >>> t2.merge_with(t3)
+    Traceback (most recent call last):
+    File "<stdin>", line 1, in <module>
+    File "/home/luto/uberspace/libestg3b/libestg3b/estg3b.py", line 153, in merge_with
+        raise Exception('Only overlapping Timespans can be merged.')
+    Exception: Only overlapping Timespans can be merged.
+    >>> t2.merge_with(t1)
+    Timespan(start=datetime.datetime(2018, 10, 2, 2, 0), end=datetime.datetime(2018, 10, 2, 8, 0))
+    >>>
+    >>> Timespan.union([t1, t2, t3])
+    [Timespan(start=datetime.datetime(2018, 10, 2, 2, 0), end=datetime.datetime(2018, 10, 2, 9, 0))]
+
+    """
+
+    start: datetime.datetime
+    end: datetime.datetime
+
+    def overlaps(self, other: 'Timespan') -> bool:
+        """
+        Return true, if this timestamp and the given one share some time.
+
+        :param other:
+        """
+
+        if not isinstance(other, Timespan):
+            raise Exception('Please provide an Timespan object')
+
+        return (
+            (self.start <= other.start <= self.end)
+            or (self.start <= other.end <= self.end)
+            or (other.start <= self.start <= other.end)
+            or (other.start <= self.end <= other.end)
+        )
+
+    def merge_with(self, other: 'Timespan') -> 'Timespan':
+        """
+        Return a new Timespan which spans the range of this one and the given one.
+
+        :param other:
+        """
+
+        if not isinstance(other, Timespan):
+            raise Exception('Please provide an Timespan object.')
+        if not other.overlaps(self):
+            raise Exception('Only overlapping Timespans can be merged.')
+
+        return Timespan(start=min(self.start, other.start), end=max(self.end, other.end))
+
+    @classmethod
+    def union(cls, spans: List['Timespan']) -> List['Timespan']:
+        """
+        Return the minimal list of Timespan objects which are covered by at least one given Availability.
+
+        :param matchs:
+        """
+        if not spans:
+            return []
+
+        spans = sorted(spans, key=lambda s: s.start)
+        result = [spans[0]]
+        spans = spans[1:]
+
+        for span in spans:
+            if span.overlaps(result[-1]):
+                result[-1] = result[-1].merge_with(span)
+            else:
+                result.append(span)
+
+        return result
 
 
 @dataclasses.dataclass
