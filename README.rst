@@ -3,7 +3,7 @@ libestg3b
 
 .. image:: https://travis-ci.com/Uberspace/libestg3b.svg?branch=master
     :target: https://travis-ci.com/Uberspace/libestg3b
-    :alt: Documentation Status
+    :alt: CI Status
 
 .. image:: https://readthedocs.org/projects/libestg3b/badge/?version=latest
     :target: https://libestg3b.readthedocs.io/en/latest/?badge=latest
