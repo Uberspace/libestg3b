@@ -12,7 +12,7 @@ except ImportError:
 
 setup(
     name='libestg3b',
-    version='0.0.2',
+    version='0.0.3',
     description='',
     author='uberspace.de',
     author_email='hallo@uberspace.de',
