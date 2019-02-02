@@ -9,10 +9,6 @@ libestg3b
     :target: https://libestg3b.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
-.. image:: https://codecov.io/gh/Uberspace/libestg3b/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/Uberspace/libestg3b
-    :alt: test coverage
-
 .. image:: https://img.shields.io/pypi/v/libestg3b.svg
     :target: https://pypi.python.org/pypi/libestg3b
     :alt: PyPI
