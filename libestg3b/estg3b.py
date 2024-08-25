@@ -178,6 +178,9 @@ class Timespan():
 
         :param matchs:
         """
+
+        spans = list(spans)
+
         if not spans:
             return []
 
